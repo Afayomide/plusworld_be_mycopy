@@ -1,0 +1,97 @@
+[
+  {
+    "courseName": "Roof And Structural Waterproofing",
+    "courseImage": "",
+    "tutorName": "Tunde Adebayo",
+    "courseCategory": "Construction",
+    "courseMedia": "https://plusworld.s3.amazonaws.com/coursefiles/3.+ROOF+AND+STRUCTURAL+WATERPROOFING.pptx",
+    "courseLesson": [
+
+    ],
+    "mediaType": "pptx",
+    "new": true,
+    "price": 299.99,
+    "duration": 10,
+    "description": [
+      "Understand the principles of roof and structural waterproofing.",
+      "Learn about different waterproofing materials and their applications.",
+      "Gain hands-on experience with waterproofing techniques."
+    ]
+  },
+  {
+    "courseName": "Introduction To Roof Maintenance AND Repairs",
+    "courseImage": "",
+    "tutorName": "Ngozi Okeke",
+    "courseCategory": "Maintenance",
+    "courseMedia": "https://plusworld.s3.amazonaws.com/coursefiles/2.+INTRODUCTION+TO+ROOF+MAINTENANCE+AND+REPAIRS.pptx",
+    "mediaType": "pptx",
+    "new": false,
+    "price": 199.99,
+    "duration": 8,
+    "description": [
+      "Learn the basics of roof maintenance and repair strategies.",
+      "Identify common roof issues and how to address them.",
+      "Gain practical skills for performing routine roof inspections."
+    ]
+  },
+  {
+    "courseName": "Introduction To Roofs And Roofing Systems",
+    "tutorName": "Chinedu Eze",
+    "courseCategory": "Construction",
+    "courseMedia": "https://plusworld.s3.amazonaws.com/coursefiles/1.+INTRODUCTION+TO+ROOFS+AND+ROOFING+SYSTEMS.+Ebizi1.pptx",
+    "mediaType": "pptx",
+    "new": true,
+    "price": 149.99,
+    "duration": 6,
+    "description": [
+      "Explore different types of roofs and roofing systems.",
+      "Understand the components and design of roofing systems.",
+      "Learn about the materials used in various roofing applications."
+    ]
+  },
+  {
+    "courseName": "Roof Restoration",
+    "tutorName": "Aisha Bello",
+    "courseCategory": "Renovation",
+    "courseMedia": "https://plusworld.s3.amazonaws.com/coursefiles/4.+ROOF+RESTORATIONEbizi.pptx",
+    "mediaType": "pptx",
+    "new": false,
+    "price": 249.99,
+    "duration": 9,
+    "description": [
+      "Discover techniques for restoring old or damaged roofs.",
+      "Learn about the tools and materials needed for roof restoration.",
+      "Gain skills to assess roof conditions and plan restoration projects."
+    ]
+  },
+  {
+    "courseName": "HSE- Safety At Height & Workplace",
+    "tutorName": "Femi Ogunleye",
+    "courseCategory": "Safety",
+    "courseMedia": "https://plusworld.s3.amazonaws.com/coursefiles/6.+HSE-+SAFETY+AT+HEIGHT+%26+WORKPLACE+(1).pptx",
+    "mediaType": "pptx",
+    "new": true,
+    "price": 179.99,
+    "duration": 7,
+    "description": [
+      "Understand the principles of safety when working at heights.",
+      "Learn about safety equipment and how to use it effectively.",
+      "Gain knowledge of workplace safety regulations and best practices."
+    ]
+  },
+  {
+    "courseName": "Roofing Business Mgt",
+    "tutorName": "Ifeoma Obi",
+    "courseCategory": "Business",
+    "courseMedia": "https://plusworld.s3.amazonaws.com/coursefiles/5.+ROOFING+BUSINESS+MGT.pptx",
+    "mediaType": "pptx",
+    "new": true,
+    "price": 299.99,
+    "duration": 12,
+    "description": [
+      "Learn the essentials of managing a roofing business.",
+      "Understand financial management, customer relations, and marketing for roofing companies.",
+      "Gain skills in project management and business development."
+    ]
+  }
+]
