@@ -126,13 +126,13 @@ router.post('/login', async (req:any, res:any) => {
           <img src="cid:logoImage" alt="Company Logo" width="100" height:auto;>
         </div>
       `,
-      attachments: [
-        {
-          filename: 'logo.png',
-          path: '/public/logo.png', 
-          cid: 'logoImage', 
-        },
-      ],
+      // attachments: [
+      //   {
+      //     filename: 'logo.png',
+      //     path: '/public/logo.png', 
+      //     cid: 'logoImage', 
+      //   },
+      // ],
       };
   
       await transporter.sendMail(mailOptions);
