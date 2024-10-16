@@ -129,7 +129,7 @@ router.post('/login', async (req:any, res:any) => {
       attachments: [
         {
           filename: 'logo.png',
-          path: 'assets/logo.png', 
+          path: 'public/logo.png', 
           cid: 'logoImage', 
         },
       ],
