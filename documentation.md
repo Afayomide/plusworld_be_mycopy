@@ -21,8 +21,7 @@ http://localhost:3000/api/courses
   - **Code**: `200 OK`
   - **Content**: JSON array of courses.
   - **Example**:
-    ```
-    json
+    `   json
     [
        {
       "_id": "667ace469922eb5517afc1e5",
@@ -100,7 +99,7 @@ http://localhost:3000/api/courses
     },,
       ...
     ]
-    ```
+  `
 - **Error Responses**:
   - **Code**: `500 Internal Server Error`
   - **Content**: `{ "error": "An error occurred while retrieving courses." }`
@@ -115,8 +114,7 @@ http://localhost:3000/api/courses
   - **Code**: `200 OK`
   - **Content**: JSON object of the course.
   - **Example**:
-    ```
-    json
+    `   json
      {
       "_id": "667ace469922eb5517afc1e5",
       "courseName": "Introduction To Roof Maintenance And Repairs",
@@ -191,7 +189,7 @@ http://localhost:3000/api/courses
       "students": 0,                   
       "dateCreated": new Date('2024-03-01')
     },
-    ```
+  `
 - **Error Responses**:
   - **Code**: `404 Not Found`
   - **Content**: `{ "error": "Course not found." }`
@@ -208,104 +206,103 @@ http://localhost:3000/api/courses
   - **Code**: `200 OK`
   - **Content**: JSON object of items in the database that contain the search term.
   - **Example**:
-  {
-  "searchTerm": "Roof"
-}
- - **Result**: 
- {
-  "result": [
     {
-      "_id": "667ace469922eb5517afc1e6",
-      "courseName": "INTRODUCTION TO ROOFS AND ROOFING SYSTEMS",
-      "tutorName": "Chinedu Eze",
-      "courseCategory": "Construction",
-      "courseMedia": "https://plusworld.s3.amazonaws.com/coursefiles/1.+INTRODUCTION+TO+ROOFS+AND+ROOFING+SYSTEMS.+Ebizi1.pptx",
-      "mediaType": "pptx",
-      "new": true,
-      "price": 149.99,
-      "duration": "6",
-      "description": [
-        "Explore different types of roofs and roofing systems.",
-        "Understand the components and design of roofing systems.",
-        "Learn about the materials used in various roofing applications."
-      ]
-    },
-    {
-      "_id": "667ace469922eb5517afc1e4",
-      "courseName": "ROOF AND STRUCTURAL WATERPROOFING",
-      "tutorName": "Tunde Adebayo",
-      "courseCategory": "Construction",
-      "courseMedia": "https://plusworld.s3.amazonaws.com/coursefiles/3.+ROOF+AND+STRUCTURAL+WATERPROOFING.pptx",
-      "mediaType": "pptx",
-      "new": true,
-      "price": 299.99,
-      "duration": "10",
-      "description": [
-        "Understand the principles of roof and structural waterproofing.",
-        "Learn about different waterproofing materials and their applications.",
-        "Gain hands-on experience with waterproofing techniques."
-      ]
-    },
-    {
-      "_id": "667ace469922eb5517afc1e9",
-      "courseName": "ROOFING BUSINESS MGT",
-      "tutorName": "Ifeoma Obi",
-      "courseCategory": "Business",
-      "courseMedia": "https://plusworld.s3.amazonaws.com/coursefiles/5.+ROOFING+BUSINESS+MGT.pptx",
-      "mediaType": "pptx",
-      "new": true,
-      "price": 299.99,
-      "duration": "12",
-      "description": [
-        "Learn the essentials of managing a roofing business.",
-        "Understand financial management, customer relations, and marketing for roofing companies.",
-        "Gain skills in project management and business development."
-      ]
-    },
-    {
-      "_id": "667ace469922eb5517afc1e5",
-      "courseName": "INTRODUCTION TO ROOF MAINTENANCE AND REPAIRS",
-      "tutorName": "Ngozi Okeke",
-      "courseCategory": "Maintenance",
-      "courseMedia": "https://plusworld.s3.amazonaws.com/coursefiles/2.+INTRODUCTION+TO+ROOF+MAINTENANCE+AND+REPAIRS.pptx",
-      "mediaType": "pptx",
-      "new": false,
-      "price": 199.99,
-      "duration": "8",
-      "description": [
-        "Learn the basics of roof maintenance and repair strategies.",
-        "Identify common roof issues and how to address them.",
-        "Gain practical skills for performing routine roof inspections."
-      ]
-    },
-    {
-      "_id": "667ace469922eb5517afc1e7",
-      "courseName": "ROOF RESTORATION",
-      "tutorName": "Aisha Bello",
-      "courseCategory": "Renovation",
-      "courseMedia": "https://plusworld.s3.amazonaws.com/coursefiles/4.+ROOF+RESTORATIONEbizi.pptx",
-      "mediaType": "pptx",
-      "new": false,
-      "price": 249.99,
-      "duration": "9",
-      "description": [
-        "Discover techniques for restoring old or damaged roofs.",
-        "Learn about the tools and materials needed for roof restoration.",
-        "Gain skills to assess roof conditions and plan restoration projects."
-      ]
+    "searchTerm": "Roof"
     }
+- **Result**:
+  {
+  "result": [
+  {
+  "\_id": "667ace469922eb5517afc1e6",
+  "courseName": "INTRODUCTION TO ROOFS AND ROOFING SYSTEMS",
+  "tutorName": "Chinedu Eze",
+  "courseCategory": "Construction",
+  "courseMedia": "https://plusworld.s3.amazonaws.com/coursefiles/1.+INTRODUCTION+TO+ROOFS+AND+ROOFING+SYSTEMS.+Ebizi1.pptx",
+  "mediaType": "pptx",
+  "new": true,
+  "price": 149.99,
+  "duration": "6",
+  "description": [
+  "Explore different types of roofs and roofing systems.",
+  "Understand the components and design of roofing systems.",
+  "Learn about the materials used in various roofing applications."
   ]
-}
+  },
+  {
+  "\_id": "667ace469922eb5517afc1e4",
+  "courseName": "ROOF AND STRUCTURAL WATERPROOFING",
+  "tutorName": "Tunde Adebayo",
+  "courseCategory": "Construction",
+  "courseMedia": "https://plusworld.s3.amazonaws.com/coursefiles/3.+ROOF+AND+STRUCTURAL+WATERPROOFING.pptx",
+  "mediaType": "pptx",
+  "new": true,
+  "price": 299.99,
+  "duration": "10",
+  "description": [
+  "Understand the principles of roof and structural waterproofing.",
+  "Learn about different waterproofing materials and their applications.",
+  "Gain hands-on experience with waterproofing techniques."
+  ]
+  },
+  {
+  "\_id": "667ace469922eb5517afc1e9",
+  "courseName": "ROOFING BUSINESS MGT",
+  "tutorName": "Ifeoma Obi",
+  "courseCategory": "Business",
+  "courseMedia": "https://plusworld.s3.amazonaws.com/coursefiles/5.+ROOFING+BUSINESS+MGT.pptx",
+  "mediaType": "pptx",
+  "new": true,
+  "price": 299.99,
+  "duration": "12",
+  "description": [
+  "Learn the essentials of managing a roofing business.",
+  "Understand financial management, customer relations, and marketing for roofing companies.",
+  "Gain skills in project management and business development."
+  ]
+  },
+  {
+  "\_id": "667ace469922eb5517afc1e5",
+  "courseName": "INTRODUCTION TO ROOF MAINTENANCE AND REPAIRS",
+  "tutorName": "Ngozi Okeke",
+  "courseCategory": "Maintenance",
+  "courseMedia": "https://plusworld.s3.amazonaws.com/coursefiles/2.+INTRODUCTION+TO+ROOF+MAINTENANCE+AND+REPAIRS.pptx",
+  "mediaType": "pptx",
+  "new": false,
+  "price": 199.99,
+  "duration": "8",
+  "description": [
+  "Learn the basics of roof maintenance and repair strategies.",
+  "Identify common roof issues and how to address them.",
+  "Gain practical skills for performing routine roof inspections."
+  ]
+  },
+  {
+  "\_id": "667ace469922eb5517afc1e7",
+  "courseName": "ROOF RESTORATION",
+  "tutorName": "Aisha Bello",
+  "courseCategory": "Renovation",
+  "courseMedia": "https://plusworld.s3.amazonaws.com/coursefiles/4.+ROOF+RESTORATIONEbizi.pptx",
+  "mediaType": "pptx",
+  "new": false,
+  "price": 249.99,
+  "duration": "9",
+  "description": [
+  "Discover techniques for restoring old or damaged roofs.",
+  "Learn about the tools and materials needed for roof restoration.",
+  "Gain skills to assess roof conditions and plan restoration projects."
+  ]
+  }
+  ]
+  }
 
 - **Error Responses**:
- - **Code**: `400 Bad Request`
-  - **Content**: `{ "error": "Invalid search term." }`
+- **Code**: `400 Bad Request`
+- **Content**: `{ "error": "Invalid search term." }`
 
-  - **Code**: `404 Not Found`
-  - **Content**: `{ "error": "We found nothing to match your search." }`
-  - **Code**: `500 Internal Server Error`
-  - **Content**: `{ "error": "Error retrieving your search results." }`
-
+- **Code**: `404 Not Found`
+- **Content**: `{ "error": "We found nothing to match your search." }`
+- **Code**: `500 Internal Server Error`
+- **Content**: `{ "error": "Error retrieving your search results." }`
 
 ### 4. Update User Profile
 
@@ -348,7 +345,6 @@ http://localhost:3000/api/courses
   - **Code**: `500 Internal Server Error`
   - **Content**: `{ "message": "Error updating user" }`
 
-
 ### 5. Add Course to Cart
 
 - **URL**: `/user/cart/add`
@@ -376,8 +372,6 @@ http://localhost:3000/api/courses
   - **Content**: `{ "message": "Product already in cart" }`
   - **Code**: `500 Internal Server Error`
   - **Content**: `{ "message": "Internal server error" }`
-
-
 
 ### 6. Get User Cart Items
 
@@ -429,6 +423,7 @@ http://localhost:3000/api/courses
     }
     ```
 - **Error Responses**:
+
   - **Code**: `404 Not Found`
   - **Content**: `{ "message": "User not found" }`
   - **Code**: `500 Internal Server Error`
@@ -447,7 +442,7 @@ http://localhost:3000/api/courses
   - **Code**: `200 OK`
   - **Content**: JSON object with course progress details.
   - **Example**:
-    ```json
+    `json
 {
     "courseProgress": {
         "courseId": "667ace469922eb5517afc1e4",
@@ -465,7 +460,7 @@ http://localhost:3000/api/courses
         "_id": "66d860de2bc3f3fd9f3e3ad7"
     }
 }
-    ```
+    `
 - **Error Responses**:
   - **Code**: `404 Not Found`
     - **Content**: `{ "message": "User not found" }`
@@ -476,7 +471,6 @@ http://localhost:3000/api/courses
   - **Code**: `500 Internal Server Error`
     - **Content**: `{ "message": "Server error" }`
     - **Description**: An unexpected error occurred on the server.
-
 
 ### 8. Initialize Payment
 
@@ -517,13 +511,12 @@ http://localhost:3000/api/courses
       ```
 
 ### Flow:
+
 1. The endpoint takes the user's email, amount, course IDs, and a redirect URL to Paystack.
 2. If `courseIds` is not an array, it converts it into an array.
 3. A request is sent to Paystack's API to initialize the transaction, with the `courseIds` passed as metadata.
 4. If successful, Paystack returns a payment URL and other relevant data, which is sent back to the user.
 5. If an error occurs during the request, an appropriate error message is returned.
-
-
 
 ### 9. Verify Payment and Add Courses to User
 
@@ -589,14 +582,13 @@ http://localhost:3000/api/courses
       ```
 
 ### Flow:
+
 1. The endpoint takes the payment `reference` and verifies it with Paystack's API.
 2. If the payment is successful, it retrieves the `courseIds` from the metadata and checks if they are already in the user's profile.
 3. For each course that the user doesn't own, it fetches the course data, including its modules and lessons.
 4. It adds the course and lessons to the user's profile, enabling the first lesson in the first module.
 5. If no new courses are added, it returns a conflict response indicating that the user already owns the courses.
 6. In case of errors during verification or processing, appropriate error messages are returned.
-
-
 
 ### 10. Get User's Paid Courses
 
@@ -646,6 +638,7 @@ http://localhost:3000/api/courses
     ]
     ```
 - **Error Responses**:
+
   - **Code**: `404 Not Found`
     - **Content**: `{ "message": "User not found" }`
     - **Description**: The user could not be found in the database.
@@ -657,12 +650,11 @@ http://localhost:3000/api/courses
     - **Description**: An unexpected error occurred while trying to fetch the user's paid courses.
 
 - **Notes**:
+
   - The `userId` is obtained from the authentication token and used to find the user in the database.
   - `paidCoursesIds` is an array of course IDs extracted from the user's courses list.
   - Each course ID is used to fetch the corresponding course details from the `Course` collection.
   - Courses that could not be found are filtered out of the final response.
-
-  
 
     ### 11. Get Specific Lesson and Track User Progress
 
@@ -683,7 +675,7 @@ http://localhost:3000/api/courses
       "lesson": {
         "_id": "lessonId",
         "lessonNo": "Lesson1",
-        "mediaUrl": "https://example.com",
+        "mediaUrl": "https://example.com"
       },
       "userLesson": {
         "lessonId": "lessonId",
@@ -695,47 +687,44 @@ http://localhost:3000/api/courses
     ```
 - **Error Responses**:
   - **Code**: `404 Not Found`
-    - **Content**: 
+    - **Content**:
       ```json
       {
         "message": "User not found"
       }
       ```
-    - **Content**: 
+    - **Content**:
       ```json
       {
         "message": "Course not found in user's courses"
       }
       ```
-    - **Content**: 
+    - **Content**:
       ```json
       {
         "message": "Course not found"
       }
       ```
-    - **Content**: 
+    - **Content**:
       ```json
       {
         "message": "Module not found"
       }
       ```
-    - **Content**: 
+    - **Content**:
       ```json
       {
         "message": "Lesson not found"
       }
       ```
   - **Code**: `500 Internal Server Error`
-    - **Content**: 
+    - **Content**:
       ```json
       {
         "message": "An error occurred while retrieving the lesson",
         "error": "Error message here"
       }
       ```
-
-
-
 
 ### 12. Add Multiple Courses to Cart
 
@@ -756,6 +745,7 @@ http://localhost:3000/api/courses
     }
     ```
 - **Error Responses**:
+
   - **Code**: `400 Bad Request`
     - **Content**: `{ "message": "Invalid or missing course IDs" }`
     - **Description**: The request body does not include valid course IDs or is not an array.
@@ -766,6 +756,7 @@ http://localhost:3000/api/courses
     - **Content**: `{ "message": "All courses are already in the cart" }`
     - **Description**: All provided courses are already present in the user's cart.
   - **Code**: `500 Internal Server Error`
+
     - **Content**: `{ "message": "Internal server error" }`
     - **Description**: An unexpected error occurred while processing the request.
 
@@ -788,6 +779,7 @@ http://localhost:3000/api/courses
     }
     ```
 - **Error Responses**:
+
   - **Code**: `401 Unauthorized`
     - **Content**: `{ "message": "Unauthorized" }`
     - **Description**: The user is not authenticated or the token is missing.
@@ -795,9 +787,9 @@ http://localhost:3000/api/courses
     - **Content**: `{ "message": "User not found" }`
     - **Description**: The user with the specified ID was not found.
   - **Code**: `500 Internal Server Error`
+
     - **Content**: `{ "message": "Internal server error" }`
     - **Description**: An unexpected error occurred while processing the request.
-
 
     ### 14. Get Paid Course with Lesson Progress
 
@@ -838,7 +830,7 @@ http://localhost:3000/api/courses
                 "progress": 100,
                 "completed": true,
                 "isOpened": true,
-                "isEnabled": false,
+                "isEnabled": false
               }
             ]
           }
@@ -849,33 +841,32 @@ http://localhost:3000/api/courses
     ```
 - **Error Responses**:
   - **Code**: `404 Not Found`
-    - **Content**: 
+    - **Content**:
       ```json
       {
         "message": "User not found"
       }
       ```
-    - **Content**: 
+    - **Content**:
       ```json
       {
         "message": "Course not found in user's paid courses"
       }
       ```
-    - **Content**: 
+    - **Content**:
       ```json
       {
         "message": "Course not found"
       }
       ```
   - **Code**: `500 Internal Server Error`
-    - **Content**: 
+    - **Content**:
       ```json
       {
         "message": "An error occurred",
         "error": "Error message here"
       }
       ```
-
 
 ### 15. Mark Lesson as Completed and Enable Next Lesson
 
@@ -944,6 +935,7 @@ http://localhost:3000/api/courses
       ```
 
 ### Flow:
+
 1. The user's course progress is retrieved, and the lesson is marked as completed by setting `completed: true` and `progress: 100`.
 2. The next lesson in the same module or the first lesson in the next module is found and enabled by setting `isEnabled: true`.
 3. The user’s progress is saved.
@@ -982,12 +974,14 @@ http://localhost:3000/api/courses
         "message": "Server error"
       }
       ```
-### Flow:
-**Request Password Reset**:
-   1. The user provides their email address to request a password reset.
-   2. A reset token is generated and stored in the user document along with an expiration date (5 minutes from the current time).
-   3. An email containing a reset link with the token is sent to the user.
 
+### Flow:
+
+**Request Password Reset**:
+
+1.  The user provides their email address to request a password reset.
+2.  A reset token is generated and stored in the user document along with an expiration date (5 minutes from the current time).
+3.  An email containing a reset link with the token is sent to the user.
 
 ## 17. Reset Password
 
@@ -1023,8 +1017,179 @@ http://localhost:3000/api/courses
       ```
 
 ### Flow:
- **Reset Password**:
-   1. The user submits the reset token(automatically after clicking on the link) and their new password.
-   2. The token is validated against the stored token and checked for expiration.
-   3. If valid, the new password is hashed and saved, and the reset token and expiration are cleared from the user document.
-   4. A success message is returned to the user.
+
+**Reset Password**:
+
+1.  The user submits the reset token(automatically after clicking on the link) and their new password.
+2.  The token is validated against the stored token and checked for expiration.
+3.  If valid, the new password is hashed and saved, and the reset token and expiration are cleared from the user document.
+4.  A success message is returned to the user.
+
+## 18. Initiate Signup
+
+- **URL**: `/auth/signup`
+- **Method**: `POST`
+- **Description**: Initiates the signup process by generating a signup token and sending a confirmation link to the user's email.
+- **Request Body**:
+  - **`fullname`** (required): The full name of the user.
+  - **`username`** (required): The desired username for the account.
+  - **`email`** (required): The email address for the account.
+  - **`password`** (required): The password for the account.
+  - **`phone`** (required): The phone number of the user.
+- **Success Response**:
+  - **Code**: `200 OK`
+  - **Content**: JSON object confirming that the signup email has been sent.
+  - **Example**:
+    ```json
+    {
+      "success": true,
+      "message": "Email sent, signup incomplete"
+    }
+    ```
+- **Error Responses**:
+  - **Code**: `400 Bad Request` – One or more required fields are missing.
+    - **Content**:
+      ```json
+      {
+        "success": false,
+        "message": "All fields are required"
+      }
+      ```
+  - **Code**: `400 Bad Request` – Username already exists.
+    - **Content**:
+      ```json
+      {
+        "success": false,
+        "message": "Username already exists"
+      }
+      ```
+  - **Code**: `500 Internal Server Error` – Server error occurred while processing the request.
+    - **Content**:
+      ```json
+      {
+        "success": false,
+        "message": "Internal server error"
+      }
+      ```
+
+### Flow:
+
+**Initiate Signup**:
+
+- The user provides their full name, username, email, password, and phone number to initiate the signup process.
+- A unique signup token is generated, and the user data is stored with a status of "incomplete signup".
+- An email containing a confirmation link with the signup token is sent to the user.
+
+## 19. Complete Signup
+
+- **URL**: `/auth/complete-signup`
+- **Method**: `POST`
+- **Description**: Completes the signup process by validating the signup token and setting the user's status to completed.
+- **Request Body**:
+  - **`token`** (required): The token sent to the user's email to verify their signup.
+  - **`password`** (required): The password to be set for the user (not used in the current implementation).
+- **Success Response**:
+  - **Code**: `200 OK`
+  - **Content**: JSON object confirming that the signup has been completed.
+  - **Example**:
+    ```json
+    {
+      "message": "signup completed."
+    }
+    ```
+- **Error Responses**:
+  - **Code**: `400 Bad Request` – The signup token is invalid or has expired.
+    - **Content**:
+      ```json
+      {
+        "message": "Password reset token is invalid or has expired."
+      }
+      ```
+  - **Code**: `500 Internal Server Error` – Server error occurred while processing the request.
+    - **Content**:
+      ```json
+      {
+        "message": "Server Error"
+      }
+      ```
+
+### Flow:
+
+**Complete Signup**:
+
+- The user submits the signup token received in their email.
+- The token is validated against the stored token and checked for expiration.
+- If valid, the user's status is updated to "completed".
+- A success message is returned to the user.
+
+# Login Functionality
+
+## 20 .Login User
+
+- **URL**: `/auth/login`
+- **Method**: `POST`
+- **Description**: Authenticates a user by verifying their email and password, and returns a JWT token if successful.
+- **Request Body**:
+  - **`email`** (required): The email address of the user.
+  - **`password`** (required): The password for the user's account.
+- **Success Response**:
+  - **Code**: `200 OK`
+  - **Content**: JSON object containing a success message, JWT token, and user details.
+  - **Example**:
+    ```json
+    {
+      "success": true,
+      "token": "your_jwt_token_here",
+      "user": {
+        "_id": "user_id",
+        "fullname": "User Full Name",
+        "username": "username",
+        "email": "user@example.com",
+        "phone": "123-456-7890",
+        "status": "completed"
+      }
+    }
+    ```
+- **Error Responses**:
+  - **Code**: `401 Unauthorized` – Invalid email or password.
+    - **Content**:
+      ```json
+      {
+        "success": false,
+        "message": "Invalid username or password"
+      }
+      ```
+  - **Code**: `200 OK` – User signup is not completed.
+    - **Content**:
+      ```json
+      {
+        "message": "user sign up not completed"
+      }
+      ```
+  - **Code**: `500 Internal Server Error` – Server error occurred while processing the request.
+    - **Content**:
+      ```json
+      {
+        "success": false,
+        "message": "Internal server error"
+      }
+      ```
+
+### Flow:
+
+1. **Login User**:
+   - The user provides their email and password.
+   - The application searches for a user with the provided email.
+   - If no user is found or the password does not match, an error response is returned indicating invalid credentials.
+   - If the user exists but has an "incomplete signup" status, a message is returned indicating that the signup process is not complete.
+   - If the login is successful and the user’s status is "completed", a JWT token is generated and returned to the user along with their details.
+
+### Flow:
+
+**Login User**:
+
+- The user provides their email and password.
+- The application searches for a user with the provided email.
+- If no user is found or the password does not match, an error response is returned indicating invalid credentials.
+- If the user exists but has an "incomplete signup" status, a message is returned indicating that the signup process is not complete.
+- If the login is successful and the user’s status is "completed", a JWT token is generated and returned to the user along with their details.

@@ -6,6 +6,7 @@ const app = express();
 const mongoose = require('mongoose');
 import Courses from './models/courses';
 import UserProgress from './models/userProgress';
+import verifyToken from './verifyToken';
 const nodemailer = require('nodemailer');
 const userRouter = require('./routes/user');
 const courseRouter = require('./routes/course');
@@ -29,11 +30,20 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.raw());
 app.use(bodyParser.text());
-app.use('/api/user', userRouter);
+app.use('/api/user',verifyToken, userRouter);
 app.use('/api/courses', courseRouter);
 app.use('/api/auth', authRouter)
 
 app.use('/api', paymentRouter)
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: any; // or you can specify a type for `user`, e.g., `User`
+      file?: any;
+    }
+  }
+}
 
 async function connectToMongo(dburl: string) {
   const retryAttempts = 3;
@@ -168,12 +178,12 @@ app.post('/api/complete-course', async (req: any, res: any) => {
   }
 });
 
-function monitorMemory() {
-  const memoryUsage = process.memoryUsage();
-  console.log(`Memory Usage: ${memoryUsage.heapUsed / 1024 / 1024} MB`);
-}
+// function monitorMemory() {
+//   const memoryUsage = process.memoryUsage();
+//   console.log(`Memory Usage: ${memoryUsage.heapUsed / 1024 / 1024} MB`);
+// }
 
-setInterval(monitorMemory, 5000);  // Check every 5 secondscd
+// setInterval(monitorMemory, 5000);  // Check every 5 secondscd
 
 
 

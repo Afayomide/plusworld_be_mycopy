@@ -24,16 +24,54 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const CourseSchema = new mongoose_1.default.Schema({
+const CourseLessonSchema = new mongoose_1.Schema({
+    lessonNo: { type: String, required: true },
+    mediaUrl: { type: String, required: true },
+    lessonIndex: { type: Number, required: true },
+    _id: { type: mongoose_1.default.Schema.Types.ObjectId, auto: true }
+});
+const CourseModuleSchema = new mongoose_1.Schema({
+    moduleName: { type: String, required: true },
+    moduleIndex: { type: Number, required: true },
+    lessons: { type: [CourseLessonSchema], required: true },
+});
+const TutorSchema = new mongoose_1.Schema({
+    name: { type: String, required: true },
+    about: { type: String, required: false },
+    profileImage: { type: String, required: true },
+    socialMedia: {
+        twitter: { type: String, required: false },
+        linkedin: { type: String, required: false },
+        facebook: { type: String, required: false },
+        instagram: { type: String, required: false },
+    }
+});
+const CourseSchema = new mongoose_1.Schema({
     courseName: { type: String, required: true },
-    courseTitle: { type: String, required: true },
-    tutorName: { type: String, required: true },
+    courseImage: { type: String, required: false },
+    // courseTitle: { type: String, required: true },
+    tutors: { type: [TutorSchema], required: true },
     courseCategory: { type: String, required: true },
-    video: { type: String, optional: true },
+    courseMedia: { type: String, required: false },
+    courseModules: { type: [CourseModuleSchema], required: false },
+    mediaType: {
+        type: String,
+        enum: ['video', 'pptx', 'pdf', 'ebook', 'image', 'audio'],
+        required: false,
+    },
     new: { type: Boolean, required: true },
     price: { type: Number, required: true },
-    duration: { type: Number, required: true },
-    description: { type: [String], required: true },
+    level: { type: String, required: true },
+    duration: { type: String, required: true },
+    lessons: { type: Number, required: true },
+    quizzes: { type: Number, required: true },
+    certification: { type: Boolean, required: true },
+    graduation: { type: String },
+    description: { type: String, required: true },
+    modules: { type: [String], required: true },
+    learningOutcome: { type: [String], required: true },
+    students: { type: Number, default: 0, required: true },
+    dateCreated: { type: Date, default: Date.now },
 });
-const Courses = (0, mongoose_1.model)('Courses', CourseSchema);
-exports.default = Courses;
+const Course = mongoose_1.default.model('Course', CourseSchema);
+exports.default = Course;

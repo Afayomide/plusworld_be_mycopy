@@ -36,10 +36,10 @@ export interface User {
   goal: string;
   cart: CartItem[];
   profileCompleted: boolean
-  courses: CourseAndProgress[]
-  resetPasswordToken?: string,
-  resetPasswordExpires?: Date
-
+  courses: CourseAndProgress[];
+  token?: string;
+  tokenExpires?: Date;
+  status? : string;
 }
 
 const userSchema = new mongoose.Schema<User>({
@@ -104,12 +104,16 @@ const userSchema = new mongoose.Schema<User>({
       },
     },
   ],
-  resetPasswordToken:{
+  token: {
     type: String,
     required: false, 
   },
-  resetPasswordExpires: {
+  tokenExpires: {
     type: Date,
+    required: false
+  },
+  status :{
+    type: String,
     required: false
   }
 });

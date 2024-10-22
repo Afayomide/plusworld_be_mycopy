@@ -15,25 +15,34 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
 require('dotenv').config();
 const app = express();
 const mongoose = require('mongoose');
-const user_1 = __importDefault(require("./models/user"));
 const courses_1 = __importDefault(require("./models/courses"));
-const nodemailer = require("nodemailer");
+const userProgress_1 = __importDefault(require("./models/userProgress"));
+const verifyToken_1 = __importDefault(require("./verifyToken"));
+const nodemailer = require('nodemailer');
+const userRouter = require('./routes/user');
+const courseRouter = require('./routes/course');
+const paymentRouter = require('./routes/payments');
+const authRouter = require("./routes/auth");
 const port = 4000;
-const dburl = process.env.dburl || "";
+const dburl = process.env.dburl || '';
 const corsOption = {
-    origin: ['http://localhost:5173', 'https://plusworld-fe.vercel.app']
+    origin: ['http://localhost:5173', 'https://plusworld-fe.vercel.app', 'http://localhost:3000', 'https://plusworld.vercel.app'],
 };
 app.use(cors(corsOption));
+app.use(express.json());
+app.use(express.urlencoded());
 app.use(bodyParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.raw());
 app.use(bodyParser.text());
+app.use('/api/user', verifyToken_1.default, userRouter);
+app.use('/api/courses', courseRouter);
+app.use('/api/auth', authRouter);
+app.use('/api', paymentRouter);
 function connectToMongo(dburl) {
     return __awaiter(this, void 0, void 0, function* () {
         const retryAttempts = 3;
@@ -43,14 +52,14 @@ function connectToMongo(dburl) {
                 yield mongoose.connect(dburl, {
                     useNewUrlParser: true,
                     useUnifiedTopology: true,
-                    connectTimeoutMS
+                    connectTimeoutMS,
                 });
                 console.log('Connected to Database');
                 return;
             }
             catch (error) {
                 console.error(`Connection attempt ${attempt} failed:`, error.message);
-                yield new Promise(resolve => setTimeout(resolve, Math.min(attempt * 2000, 10000)));
+                yield new Promise((resolve) => setTimeout(resolve, Math.min(attempt * 2000, 10000)));
             }
         }
         throw new Error('Failed to connect to MongoDB Atlas after retries');
@@ -58,143 +67,56 @@ function connectToMongo(dburl) {
 }
 connectToMongo(dburl)
     .then(() => {
-    console.log("connection succesful");
+    console.log('connection succesful');
 })
-    .catch(error => {
+    .catch((error) => {
     console.error('Fatal error:', error.message);
 });
-function verifyToken(req, res, next) {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ message: 'Unauthorized' });
-    }
-    const token = authHeader.split(' ')[1];
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
-        const now = Date.now() / 1000;
-        if (decoded.exp < now) {
-            console.warn('JWT has expired!');
-            return res.status(401).json({ message: 'Your session has expired. Please log in again.' });
-        }
-        else {
-        }
-        next();
-    }
-    catch (error) {
-        return res.status(403).json({ message: 'Invalid token' });
-    }
-}
 app.get('/', (req, res) => {
-    res.send("Dandys Server");
+    res.send('Dandys Server');
 });
-app.post('/api/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { username, password } = req.body;
-    try {
-        const user = yield user_1.default.findOne({ username });
-        if (!user || !bcrypt.compareSync(password, user.password)) {
-            return res.json({ success: false, message: 'Invalid username or password' });
-        }
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '4d' });
-        res.json({ success: true, token });
+app.get('/api/search', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { searchTerm } = req.query;
+    if (typeof searchTerm !== 'string' || searchTerm.trim() === '') {
+        return res.status(400).json({ error: 'Invalid search term' });
     }
-    catch (error) {
-        console.error('Error:', error.message);
-        res.status(500).json({ success: false, message: 'Internal server error' });
-    }
-}));
-app.post('/api/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { fullname, username, email, password } = req.body;
-    if (!username || !password || !fullname || !email) {
-        res.json({ success: false, message: 'All Fields are required' });
-    }
-    try {
-        const existingUser = yield user_1.default.findOne({ username });
-        if (existingUser) {
-            return res.json({ success: false, message: 'Username already exists' });
-        }
-        const hashedPassword = bcrypt.hashSync(password, 10);
-        const customer = new user_1.default({
-            fullname,
-            username,
-            email,
-            password: hashedPassword,
-        });
-        yield customer.save();
-        res.json({ success: true });
-    }
-    catch (error) {
-        console.error('Error:', error.message);
-        res.json({ success: false, message: 'Internal server error' });
-    }
-}));
-app.post('/api/search', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { searchTerm } = req.body;
-    console.log(req.query);
-    console.log(req.params);
-    console.log(req.body);
     try {
         console.log(`this is ${searchTerm}`);
         const searchOptions = {
             $or: [
                 { courseName: { $regex: searchTerm, $options: 'i' } },
                 { courseTitle: { $regex: searchTerm, $options: 'i' } },
-                { tutorName: { $regex: searchTerm, $options: 'i' } },
+                { tutors: { $regex: searchTerm, $options: 'i' } },
                 { courseCategory: { $regex: searchTerm, $options: 'i' } },
-                // { price: { $regex: searchTerm, $options: 'i' } },
-                // {duration: {$regex: searchTerm, $options: "i"}},
-                { description: { $regex: searchTerm, $options: "i" } }
+                { description: { $regex: searchTerm, $options: 'i' } },
             ],
         };
         const result = yield courses_1.default.find(searchOptions);
+        if (result.length === 0) {
+            return res.status(404).json({ error: 'No courses found matching your search.' });
+        }
         res.json({ result });
     }
     catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Error retrieving products' });
+        res.status(500).json({ error: 'Error retrieving your search results' });
     }
 }));
-app.put("/api/user", verifyToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = req.user.userId;
-    const { username, fullname, email, interests, location } = req.body;
-    try {
-        // Construct update data object with the fields to be updated
-        const updateData = {};
-        if (fullname)
-            updateData.fullname = fullname;
-        if (username)
-            updateData.username = username;
-        if (email)
-            updateData.email = email;
-        if (interests)
-            updateData.interests = interests;
-        if (location)
-            updateData.location = location;
-        const updatedUser = yield user_1.default.findByIdAndUpdate(id, updateData, { new: true });
-        res.json(updatedUser);
-    }
-    catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error updating user' });
-    }
-}));
-app.post('/submit-form', (req, res) => {
-    // Extract form data from the request
+app.post('/api/submit-form', (req, res) => {
     const { name, email, message } = req.body;
-    // Create a Nodemailer transporter
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
             user: 'your_email@gmail.com',
-            pass: 'your_password'
-        }
+            pass: 'your_password',
+        },
     });
     // Define email options
     const mailOptions = {
         from: 'your_email@gmail.com',
         to: 'recipient_email@example.com',
         subject: 'New Form Submission',
-        text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`
+        text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
     };
     // Send email
     transporter.sendMail(mailOptions, (error, info) => {
@@ -208,6 +130,44 @@ app.post('/submit-form', (req, res) => {
         }
     });
 });
+app.post('/api/start-course', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userId, courseId } = req.body;
+    try {
+        const progress = new userProgress_1.default({
+            userId,
+            courseId,
+            startTime: new Date(),
+            sectionsCompleted: 0,
+            status: 'in progress',
+        });
+        yield progress.save();
+        res.json(progress);
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Error starting course' });
+    }
+}));
+app.post('/api/complete-course', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userId, courseId } = req.body;
+    try {
+        const progress = yield userProgress_1.default.findOne({ userId, courseId });
+        if (!progress) {
+            return res.status(404).json({ error: 'Progress not found' });
+        }
+        progress.status = 'finished';
+        progress.sectionsCompleted = 100;
+        yield progress.save();
+        res.json(progress);
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Error completing course' });
+    }
+}));
+function monitorMemory() {
+    const memoryUsage = process.memoryUsage();
+    console.log(`Memory Usage: ${memoryUsage.heapUsed / 1024 / 1024} MB`);
+}
+setInterval(monitorMemory, 5000); // Check every 5 secondscd
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
