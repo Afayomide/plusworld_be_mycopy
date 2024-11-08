@@ -12,7 +12,7 @@ import {
   courseProgress,
   getLesson,
   getPaidCourses,
-  getPaidCoursesId,
+  getPaidCourse,
   getUser,
   multipleCartAdd,
   updateProgress,
@@ -60,6 +60,6 @@ router
 
 router.route("/paidcourses").get(getPaidCourses);
 
-router.route("/paidcourses/:courseId").get(getPaidCoursesId);
+router.route("/paidcourse/:courseId").get(getPaidCourse);
 
 module.exports = router;

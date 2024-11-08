@@ -119,7 +119,7 @@ export const signUp = async (req: Request, res: Response) => {
 };
 
 export const completeSignup = async (req: Request, res: Response) => {
-  const { token, password } = req.body;
+  const { token} = req.body;
   try {
     const user = await User.findOne({
       token: token,

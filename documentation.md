@@ -1087,7 +1087,6 @@ http://localhost:3000/api/courses
 - **Description**: Completes the signup process by validating the signup token and setting the user's status to completed.
 - **Request Body**:
   - **`token`** (required): The token sent to the user's email to verify their signup.
-  - **`password`** (required): The password to be set for the user (not used in the current implementation).
 - **Success Response**:
   - **Code**: `200 OK`
   - **Content**: JSON object confirming that the signup has been completed.

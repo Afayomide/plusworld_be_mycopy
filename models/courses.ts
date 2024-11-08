@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema } from 'mongoose';
+import { ITest } from './test';
 
 interface Tutor {
   name: string;
@@ -23,6 +24,7 @@ interface CourseModule {
   moduleName: string;
   moduleIndex: number;
   lessons: CourseLesson[];
+  test: mongoose.Schema.Types.ObjectId;
 }
 
 
@@ -61,12 +63,13 @@ const CourseModuleSchema: Schema = new Schema({
   moduleName: { type: String, required: true },
   moduleIndex: {type: Number, required: true},
   lessons: { type: [CourseLessonSchema], required: true },
+  test: {type: mongoose.Schema.Types.ObjectId, ref: "Test"},
 });
 
 const TutorSchema: Schema = new Schema({
   name: { type: String, required: true },
   about: { type: String, required: false },
-  profileImage:{type: String, required: true},
+  profileImage:{type: String, required: false},
   socialMedia: {
     twitter: { type: String, required: false },
     linkedin: { type: String, required: false },
