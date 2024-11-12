@@ -21,7 +21,7 @@ http://localhost:3000/api/courses
   - **Code**: `200 OK`
   - **Content**: JSON array of courses.
   - **Example**:
-    `   json
+    `json
     [
        {
       "_id": "667ace469922eb5517afc1e5",
@@ -98,8 +98,7 @@ http://localhost:3000/api/courses
       "dateCreated": new Date('2024-03-01')
     },,
       ...
-    ]
-  `
+    ]`
 - **Error Responses**:
   - **Code**: `500 Internal Server Error`
   - **Content**: `{ "error": "An error occurred while retrieving courses." }`
@@ -114,7 +113,7 @@ http://localhost:3000/api/courses
   - **Code**: `200 OK`
   - **Content**: JSON object of the course.
   - **Example**:
-    `   json
+    `json
      {
       "_id": "667ace469922eb5517afc1e5",
       "courseName": "Introduction To Roof Maintenance And Repairs",
@@ -188,8 +187,7 @@ http://localhost:3000/api/courses
       ],
       "students": 0,                   
       "dateCreated": new Date('2024-03-01')
-    },
-  `
+    },`
 - **Error Responses**:
   - **Code**: `404 Not Found`
   - **Content**: `{ "error": "Course not found." }`
@@ -656,75 +654,125 @@ http://localhost:3000/api/courses
   - Each course ID is used to fetch the corresponding course details from the `Course` collection.
   - Courses that could not be found are filtered out of the final response.
 
-    ### 11. Get Specific Lesson and Track User Progress
+# Get Lesson for User's Course
 
-- **URL**: `/courses/:courseId/lesson/:lessonId`
+## 11. Retrieve a Specific Lesson for a Course
+
+- **URL**: `/user/courses/:courseId/lessons/:lessonId`
 - **Method**: `GET`
-- **Description**: Retrieves a specific lesson from a course and updates the user's progress for that lesson.
-- **Headers**:
-  - **`Authorization`**: Bearer token required to verify user.
-- **URL Parameters**:
+- **Description**: Retrieves a specific lesson from a course's module for the authenticated user. It checks if the user has access to the course and updates the user's progress and lesson status.
+- **Request Headers**:
+  - **Authorization**: JWT token (required).
+- **Request Parameters**:
   - **`courseId`** (required): The ID of the course containing the lesson.
   - **`lessonId`** (required): The ID of the lesson to retrieve.
-- **Success Response**:
-  - **Code**: `200 OK`
-  - **Content**: JSON object with the lesson and user progress information.
-  - **Example**:
-    ```json
-    {
-      "lesson": {
-        "_id": "lessonId",
-        "lessonNo": "Lesson1",
-        "mediaUrl": "https://example.com"
-      },
-      "userLesson": {
-        "lessonId": "lessonId",
+- **Response**:
+  - **Success Response**:
+    - **Code**: `200 OK`
+    - **Content**: JSON object containing the lesson details and the user's lesson progress (whether the lesson is opened, enabled, progress, and completion status).
+    - **Example**:
+      ```json
+      {
+        "lessonId": "lesson_id",
         "isOpened": true,
+        "isEnabled": true,
         "progress": 0,
-        "completed": false
-      }
-    }
-    ```
-- **Error Responses**:
-  - **Code**: `404 Not Found`
-    - **Content**:
-      ```json
-      {
-        "message": "User not found"
+        "completed": false,
+        "_id": "lesson_id",
+        "title": "Lesson Title",
+        "content": "Lesson Content",
+        "duration": 30,
+        "lessonIndex": 1
       }
       ```
-    - **Content**:
-      ```json
-      {
-        "message": "Course not found in user's courses"
-      }
-      ```
-    - **Content**:
-      ```json
-      {
-        "message": "Course not found"
-      }
-      ```
-    - **Content**:
-      ```json
-      {
-        "message": "Module not found"
-      }
-      ```
-    - **Content**:
-      ```json
-      {
-        "message": "Lesson not found"
-      }
-      ```
-  - **Code**: `500 Internal Server Error`
-    - **Content**:
-      ```json
-      {
-        "message": "An error occurred while retrieving the lesson",
-        "error": "Error message here"
-      }
-      ```
+  - **Error Responses**:
+    - **Code**: `404 Not Found` – User not found.
+      - **Content**:
+        ```json
+        {
+          "message": "User not found"
+        }
+        ```
+    - **Code**: `404 Not Found` – Course not found in the user's courses.
+      - **Content**:
+        ```json
+        {
+          "message": "Course not found in user's courses"
+        }
+        ```
+    - **Code**: `404 Not Found` – Course not found in the database.
+      - **Content**:
+        ```json
+        {
+          "message": "Course not found"
+        }
+        ```
+    - **Code**: `404 Not Found` – No modules found in the course.
+      - **Content**:
+        ```json
+        {
+          "message": "Module not found"
+        }
+        ```
+    - **Code**: `404 Not Found` – Lesson not found in the course modules.
+      - **Content**:
+        ```json
+        {
+          "message": "Lesson not found"
+        }
+        ```
+    - **Code**: `500 Internal Server Error` – Server error occurred while processing the request.
+      - **Content**:
+        ```json
+        {
+          "message": "An error occurred while retrieving the lesson",
+          "error": "error_message_here"
+        }
+        ```
+
+### Flow:
+
+1. **User Verification**:
+
+   - The server verifies the user’s identity using the `userId` in the JWT token.
+   - If the user is not found, a `404` error response is returned.
+
+2. **Course Verification**:
+
+   - The server checks if the user is enrolled in the requested course (`courseId`).
+   - If the course is not found in the user’s courses, a `404` error response is returned.
+
+3. **Lesson Search**:
+
+   - The server searches for the lesson in the course modules.
+   - If the lesson is not found, a `404` error response is returned.
+
+4. **Lesson Progress**:
+
+   - If the lesson is found, the server checks whether the user has interacted with this lesson.
+   - If no status is found, a default lesson status is created and saved.
+   - If the lesson has been opened previously, its `isOpened` status is updated.
+
+5. **Next Lesson Setup**:
+
+   - The server checks if there is a next lesson based on the `lessonIndex` and ensures that it is added to the user's course if not already present.
+
+6. **Response**:
+   - The server returns a combined response containing both the lesson details and the user's progress on the lesson.
+
+### Additional Information:
+
+- The `Lesson` object includes the following fields:
+
+  - **`lessonId`**: The ID of the lesson.
+  - **`isOpened`**: A boolean indicating whether the lesson has been opened by the user.
+  - **`isEnabled`**: A boolean indicating whether the lesson is enabled for the user.
+  - **`progress`**: The user's progress on the lesson (e.g., percentage).
+  - **`completed`**: A boolean indicating whether the user has completed the lesson.
+
+- The `Lesson` object contains detailed information about the lesson, such as its title, content, duration, and `lessonIndex`.
+
+This flow ensures that the user can always see the current status of their lessons, while also receiving any new or updated details about the lesson itself and related lessons in the course.
 
 ### 12. Add Multiple Courses to Cart
 
@@ -793,7 +841,7 @@ http://localhost:3000/api/courses
 
     ### 14. Get Paid Course with Lesson Progress
 
-- **URL**: `/user/paidcourses/:courseId`
+- **URL**: `/user/paidcourse/:courseId`
 - **Method**: `GET`
 - **Description**: Retrieves a specific paid course for the authenticated user, including detailed lesson progress.
 - **Headers**:
@@ -850,7 +898,7 @@ http://localhost:3000/api/courses
     - **Content**:
       ```json
       {
-        "message": "Course not found in user's paid courses"
+        "message": "Course not found in user's paid course"
       }
       ```
     - **Content**:
@@ -1192,3 +1240,119 @@ http://localhost:3000/api/courses
 - If no user is found or the password does not match, an error response is returned indicating invalid credentials.
 - If the user exists but has an "incomplete signup" status, a message is returned indicating that the signup process is not complete.
 - If the login is successful and the user’s status is "completed", a JWT token is generated and returned to the user along with their details.
+
+# Get Test for User's Course
+
+## 21 .Retrieve a Specific Test for a Course
+
+- **URL**: `/user/courses/:courseId/tests/:testId`
+- **Method**: `GET`
+- **Description**: Retrieves a specific test from a course's module for the authenticated user. It ensures that the user has access to the course and provides test details along with the user's test status.
+- **Request Headers**:
+  - **Authorization**: JWT token (required).
+- **Request Parameters**:
+  - **`courseId`** (required): The ID of the course containing the test.
+  - **`testId`** (required): The ID of the test to retrieve.
+- **Response**:
+  - **Success Response**:
+    - **Code**: `200 OK`
+    - **Content**: JSON object containing the test details and the user's test progress (whether the test is enabled, passed, etc.).
+    - **Example**:
+      ```json
+      {
+        "testId": "test_id",
+        "isEnabled": false,
+        "passed": false,
+        "isOpened": true,
+        "_id": "test_id",
+        "title": "Test Title",
+        "questions": [...],
+        "duration": 60,
+        "passingScore": 70,
+        ...
+      }
+      ```
+  - **Error Responses**:
+    - **Code**: `404 Not Found` – User not found.
+      - **Content**:
+        ```json
+        {
+          "message": "User not found"
+        }
+        ```
+    - **Code**: `404 Not Found` – Course not found in the user's courses.
+      - **Content**:
+        ```json
+        {
+          "message": "Course not found in user's courses"
+        }
+        ```
+    - **Code**: `404 Not Found` – Course not found in the database.
+      - **Content**:
+        ```json
+        {
+          "message": "Course not found"
+        }
+        ```
+    - **Code**: `404 Not Found` – No modules found in the course.
+      - **Content**:
+        ```json
+        {
+          "message": "Module not found"
+        }
+        ```
+    - **Code**: `404 Not Found` – Test not found in course modules.
+      - **Content**:
+        ```json
+        {
+          "message": "Test not found"
+        }
+        ```
+    - **Code**: `500 Internal Server Error` – Server error occurred while processing the request.
+      - **Content**:
+        ```json
+        {
+          "message": "An error occurred while retrieving the test",
+          "error": "error_message_here"
+        }
+        ```
+
+### Flow:
+
+1. **User Verification**:
+
+   - The server verifies the user’s identity using the `userId` in the JWT token.
+   - If the user is not found, a `404` error response is returned.
+
+2. **Course Verification**:
+
+   - The server checks if the user is enrolled in the requested course (`courseId`).
+   - If the course is not found in the user’s courses, a `404` error response is returned.
+
+3. **Course and Test Search**:
+
+   - The server searches for the course and checks for available modules within it.
+   - If the course or any module is missing, appropriate error messages are returned.
+   - The test is then searched across all course modules.
+
+4. **Test Status**:
+
+   - If the test is found, the server checks whether the user has already interacted with this test.
+   - If no status is found, a default test status is created and saved.
+   - If the test has been opened previously, its `isOpened` status is updated.
+
+5. **Response**:
+   - The server returns a combined response containing both the test details and the user's progress on the test.
+
+### Additional Information:
+
+- The `userTest` object includes the following fields:
+
+  - **`testId`**: The ID of the test.
+  - **`isEnabled`**: A boolean indicating whether the test is enabled for the user.
+  - **`passed`**: A boolean indicating whether the user has passed the test.
+  - **`isOpened`**: A boolean indicating whether the test has been opened by the user.
+
+- The object contains detailed information about the test, such as its title, questions, duration, passing score, etc.
+
+This flow ensures that the user can always see the current status of their tests, while also receiving any new or updated details about the test itself.

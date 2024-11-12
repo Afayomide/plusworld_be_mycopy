@@ -29,7 +29,7 @@ export const login = async (req: Request, res: Response) => {
         .json({ success: false, message: "Invalid username or password" });
     }
     if (user.status == "incomplete signup") {
-      return res.json({message:"user sign up not completed"});
+      return res.json({ message: "user sign up not completed" });
     }
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
@@ -78,7 +78,6 @@ export const signUp = async (req: Request, res: Response) => {
       status: "incomplete signup",
     });
 
-
     const signupURL = `${process.env.CLIENT_URL}/signup?token=${signupToken}`;
     const mailOptions = {
       to: email,
@@ -111,7 +110,10 @@ export const signUp = async (req: Request, res: Response) => {
 
     await transporter.sendMail(mailOptions);
     await newUser.save();
-    return res.json({ success: true, message: "Email sent, signup incomplete" });
+    return res.json({
+      success: true,
+      message: "Email sent, signup incomplete",
+    });
   } catch (error: any) {
     console.error("Error:", error.message);
     return res.json({ success: false, message: "Internal server error" });
@@ -119,7 +121,7 @@ export const signUp = async (req: Request, res: Response) => {
 };
 
 export const completeSignup = async (req: Request, res: Response) => {
-  const { token} = req.body;
+  const { token } = req.body;
   try {
     const user = await User.findOne({
       token: token,
@@ -169,7 +171,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
     }
 
     user.token = resetToken;
-    user.tokenExpires = new Date(Date.now() + 5 * 60 * 1000); // Token expires in 5 minutes
+    user.tokenExpires = new Date(Date.now() + 20 * 60 * 60 * 1000); // Token expires in 5 minutes
 
     await user.save();
 
@@ -249,18 +251,15 @@ export const resetPassword = async (req: Request, res: Response) => {
   }
 };
 
-export const remove = async (req:Request,res: Response ) =>{
-  try{
-     const { username } = req.body;
-  const user = await User.findOneAndDelete({username: username})
-if (!user){
-  return res.json({success: false, message: "user not found"})
-}
-  return res.json({success: true})
+export const remove = async (req: Request, res: Response) => {
+  try {
+    const { username } = req.body;
+    const user = await User.findOneAndDelete({ username: username });
+    if (!user) {
+      return res.json({ success: false, message: "user not found" });
+    }
+    return res.json({ success: true });
+  } catch (error) {
+    return error;
   }
-  catch(error) {
-    return (error)
-    console.error(error)
-  }
- 
-}
+};

@@ -17,6 +17,7 @@ import {
   multipleCartAdd,
   updateProgress,
   uploadUser,
+  getTest,
 } from "../controllers/user";
 
 const storage = multer.memoryStorage();
@@ -39,7 +40,6 @@ const upload = multer({ storage });
 
 router.route("/").get(getUser);
 
-
 router.route("/").put(upload.single("profileImage"), uploadUser);
 
 router.route("/cart/add").post(cartAdd);
@@ -53,6 +53,8 @@ router.route("/cart/list").get(cartList);
 router.route("/courseprogress/:courseId").get(courseProgress);
 
 router.route("/courses/:courseId/lesson/:lessonId").get(getLesson);
+
+router.route("/courses/:courseId/test/:testId").get(getTest);
 
 router
   .route("/courses/:courseId/lesson/:lessonId/complete")

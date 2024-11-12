@@ -355,8 +355,10 @@ export const getLesson = async (req: any, res: Response) => {
     }
 
     await user.save();
+    const plainCurrentLesson = JSON.parse(JSON.stringify(currentLesson));
+    const plainUserLesson = JSON.parse(JSON.stringify(userLesson))
 
-    return res.json({ currentLesson, userLesson });
+    return res.json({ ...plainUserLesson, ...plainCurrentLesson  });
   } catch (error: any) {
     console.error(error);
     return res.status(500).json({
@@ -365,6 +367,80 @@ export const getLesson = async (req: any, res: Response) => {
     });
   }
 };
+
+
+export const getTest = async (req: any, res: Response) => {
+  const userId = req.user.userId;
+  const { courseId, testId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const userCourse = user.courses.find(
+      (c) => c.courseId.toString() === courseId
+    );
+    if (!userCourse) {
+      return res
+        .status(404)
+        .json({ message: "Course not found in user's courses" });
+    }
+
+    const course = await Course.findById(courseId)
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+    if (!course.courseModules) {
+      return res.status(404).json({ message: "Module not found" });
+    }
+
+    const test = course.courseModules.flatMap((module) => module.test);
+    console.log(test);
+    const currentTest = test.find(
+      (test) => test.toString() === testId
+    );
+
+    if (!currentTest) {     
+       return res.json({message: "test not found"});
+
+    } 
+    const populatedTest = await mongoose.model('Test').findById(currentTest).populate();
+
+    let userTest;
+    userTest = userCourse?.tests.find(
+      (t) => t.testId.toString() === testId
+    )
+    if (!userTest) {
+      userTest = {
+        testId: testId,
+        isEnabled: false,
+        passed: false,
+        isOpened: true,
+      };
+      userCourse?.tests.push(userTest);
+    }
+     else {
+      userTest.isOpened = true;
+    }
+
+    await user.save()
+
+    const plainPopulatedTest = populatedTest.toObject();
+    const plainUserTest = JSON.parse(JSON.stringify(userTest));
+    return res.json({ ...plainUserTest, ...plainPopulatedTest  });
+
+    
+  } catch (error: any) {
+    console.error(error);
+    return res.status(500).json({
+      message: "An error occurred while retrieving the test",
+      error: error.message,
+    });
+  }
+};
+
 
 export const updateProgress = async (req: Request, res: Response) => {
   const userId = req.user.userId;
@@ -520,7 +596,7 @@ export const getPaidCourse = async (req: Request, res: Response) => {
     if (!userCourse) {
       return res
         .status(404)
-        .json({ message: "Course not found in user's paid courses" });
+        .json({ message: "Course not found in user's paid course" });
     }
 
     const course = await Course.findById(objectId).populate({

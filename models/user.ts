@@ -1,6 +1,4 @@
-
-import mongoose, {Types} from 'mongoose';
-
+import mongoose, { Types } from "mongoose";
 
 interface CartItem {
   _id: mongoose.Schema.Types.ObjectId; // or `string` if ObjectId is stored as a string
@@ -13,14 +11,20 @@ interface LessonProgress {
   isOpened: boolean;
   isEnabled: boolean;
 }
+interface Test {
+  testId: mongoose.Schema.Types.ObjectId;
+  passed: boolean;
+  isEnabled: boolean;
+  isOpened: boolean;
+}
 
 interface CourseAndProgress {
   courseId: mongoose.Schema.Types.ObjectId; // or `string` if ObjectId is stored as a string
+  tests: Test[];
   lessons: LessonProgress[];
   progress: number; // Progress as a percentage (0-100)
   completed: boolean;
 }
-
 
 export interface User {
   fullname: string;
@@ -35,38 +39,46 @@ export interface User {
   language: string;
   goal: string;
   cart: CartItem[];
-  profileCompleted: boolean
+  profileCompleted: boolean;
   courses: CourseAndProgress[];
   token?: string;
   tokenExpires?: Date;
-  status? : string;
+  status?: string;
 }
 
 const userSchema = new mongoose.Schema<User>({
   fullname: { type: String, required: true },
-  username: { type: String, required: true, unique: true }, 
-  profileImage: {type: String, required: false, unique: true},
+  username: { type: String, required: true, unique: true },
+  profileImage: { type: String, required: false, unique: true },
   email: { type: String, required: true, unique: true },
   phone: { type: String, required: false, unique: true },
-  hobbies: {type: String, required: false},
+  hobbies: { type: String, required: false },
   dob: { type: Date, required: false },
   password: { type: String, required: true },
-  location: {type: String, required: false},
-  language: {type: String, required: false},
-  goal: {type: String, required: false},
+  location: { type: String, required: false },
+  language: { type: String, required: false },
+  goal: { type: String, required: false },
   cart: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Product', 
+      ref: "Product",
     },
   ],
-  profileCompleted: {type: Boolean, default: false },
+  profileCompleted: { type: Boolean, default: false },
   courses: [
     {
       courseId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Course', // Assuming you have a Course model
+        ref: "Course", // Assuming you have a Course model
       },
+      tests: [
+        {
+          testId: { type: mongoose.Schema.Types.ObjectId },
+          passed: { type: Boolean, default: false },
+          isEnabled: { type: Boolean, default: false },
+          isOpened: {type: Boolean, default: false}
+        },
+      ],
       lessons: [
         {
           lessonId: {
@@ -106,16 +118,16 @@ const userSchema = new mongoose.Schema<User>({
   ],
   token: {
     type: String,
-    required: false, 
+    required: false,
   },
   tokenExpires: {
     type: Date,
-    required: false
+    required: false,
   },
-  status :{
+  status: {
     type: String,
-    required: false
-  }
+    required: false,
+  },
 });
 
-export default mongoose.model<User>('Customers profile data', userSchema);
+export default mongoose.model<User>("Customers profile data", userSchema);

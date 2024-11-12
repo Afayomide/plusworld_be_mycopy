@@ -7,6 +7,7 @@ interface IQuestion {
 }
 
 export interface ITest extends Document {
+  _id: mongoose.Schema.Types.ObjectId;
   testName: string;
   courseName: string;
   moduleName: string;
@@ -15,7 +16,8 @@ export interface ITest extends Document {
   type: string;
 }
 
-const testSchema: Schema = new Schema({
+export const testSchema: Schema = new Schema({
+  _id: {type: mongoose.Schema.Types.ObjectId, auto: true},
   testName: { type: String, required: true },
   courseName: { type: String, required: true },
   moduleName: { type: String, required: true },

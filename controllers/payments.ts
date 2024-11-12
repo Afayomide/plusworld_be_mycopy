@@ -5,6 +5,7 @@ require("dotenv").config();
 import User from "../models/user";
 import Course from "../models/courses";
 import { Request, Response } from "express";
+import Test from "../models/test";
 
 const PAYSTACK_SECRET_KEY = process.env.paystack_secret_key;
 
@@ -86,11 +87,27 @@ export const verify = async (req: Request, res: Response) => {
                       moduleIndex === 0 && lessonIndex === 0 ? true : false, // Enable the first lesson in the first module
                   }))
               );
+              const tests = (
+                await Promise.all(
+                  course.courseModules.map(async (module, moduleIndex) => {
+                    const foundTests = await Test.find({
+                      _id: { $in: module.test },
+                    });
+                    return foundTests.map((test) => ({
+                      testId: test._id,
+                      passed: false,
+                      isOpened: false,
+                      isEnabled: moduleIndex === 0 ? true : false,
+                    }));
+                  })
+                )
+              ).flat();
 
               user.courses.push({
                 courseId: objectId,
                 progress: 0,
                 lessons: lessons,
+                tests: tests,
                 completed: false,
               });
               newCoursesAdded = true;
