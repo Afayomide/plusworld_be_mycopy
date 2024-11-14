@@ -97,6 +97,7 @@ export const verify = async (req: Request, res: Response) => {
                       testId: test._id,
                       passed: false,
                       isOpened: false,
+                      score: "0",
                       isEnabled: moduleIndex === 0 ? true : false,
                     }));
                   })

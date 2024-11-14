@@ -170,6 +170,28 @@ app.post("/api/users", async(req:any, res:any) =>{
       var users = await User.deleteOne({email : val});
       console.log("deleted")
   }
+
+  const allUsers = await User.find();
+
+  for (const user of allUsers) {
+    let modified = false;
+
+    // Iterate over each course and its tests
+    for (const course of user.courses) {
+      for (const test of course.tests) {
+        if (test.isEnabled) {
+          test.isEnabled = false; // Update isEnabled to true if it's false
+          modified = true;
+        }
+      }
+    }
+
+    // Save user only if any test was modified
+    if (modified) {
+      await user.save();
+      console.log("changed to false")
+    }
+  }
   return res.json(await User.find())
 })
 // function monitorMemory() {

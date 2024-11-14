@@ -839,155 +839,280 @@ This flow ensures that the user can always see the current status of their lesso
     - **Content**: `{ "message": "Internal server error" }`
     - **Description**: An unexpected error occurred while processing the request.
 
-    ### 14. Get Paid Course with Lesson Progress
+  # Get Paid Course and Progress
+
+## 14. Fetch a Paid Course for a User and Include Progress Details
 
 - **URL**: `/user/paidcourse/:courseId`
+  `
 - **Method**: `GET`
-- **Description**: Retrieves a specific paid course for the authenticated user, including detailed lesson progress.
-- **Headers**:
-  - **`Authorization`**: Bearer token required to verify user.
-- **URL Parameters**:
-  - **`courseId`** (required): The ID of the course to retrieve.
-- **Success Response**:
-  - **Code**: `200 OK`
-  - **Content**: JSON object containing the course details along with lesson progress for the user.
-  - **Example**:
-    ```json
-    {
-      "course": {
-        "_id": "courseId",
-        "title": "Course Title",
-        "description": "Course description here",
-        "courseModules": [
-          {
-            "moduleName": "Module 1",
-            "lessons": [
-              {
-                "_id": "lessonId1",
-                "lessonNo": 1,
-                "mediaUrl": "https://example.com/media1",
-                "progress": 50,
-                "completed": false,
-                "isOpened": true,
-                "isEnabled": false
+- **Description**: Retrieves the specified course details for a user, along with their progress in each lesson and test. The response includes detailed progress data such as whether the lesson/test is enabled, completed, or passed.
+- **Request Headers**:
+  - **Authorization**: JWT token (required).
+- **Request Parameters**:
+  - **`courseId`** (required): The ID of the course whose progress is to be fetched.
+- **Response**:
+  - **Success Response**:
+    - **Code**: `200 OK`
+    - **Content**: JSON object containing the course details along with the user's lesson and test progress.
+    - **Example**:
+      ```json
+      {
+        "course": {
+          "courseModules": [
+            {
+              "moduleName": "Module 1",
+              "moduleIndex": 1,
+              "test": {
+                "_id": "testId",
+                "isEnabled": true,
+                "passed": false,
+                "score": "85",
+                "isOpened": true
               },
-              {
-                "_id": "lessonId2",
-                "lessonNo": 2,
-                "mediaUrl": "https://example.com/media2",
-                "progress": 100,
-                "completed": true,
-                "isOpened": true,
-                "isEnabled": false
-              }
-            ]
-          }
-        ]
-      },
-      "completed": false
-    }
-    ```
-- **Error Responses**:
-  - **Code**: `404 Not Found`
-    - **Content**:
-      ```json
-      {
-        "message": "User not found"
+              "lessons": [
+                {
+                  "_id": "lessonId",
+                  "lessonNo": 1,
+                  "lessonIndex": 1,
+                  "mediaUrl": "lesson_media_url",
+                  "progress": 80,
+                  "completed": false,
+                  "isOpened": true,
+                  "isEnabled": true
+                }
+              ]
+            }
+          ]
+        },
+        "completed": false
       }
       ```
-    - **Content**:
-      ```json
-      {
-        "message": "Course not found in user's paid course"
-      }
-      ```
-    - **Content**:
-      ```json
-      {
-        "message": "Course not found"
-      }
-      ```
-  - **Code**: `500 Internal Server Error`
-    - **Content**:
-      ```json
-      {
-        "message": "An error occurred",
-        "error": "Error message here"
-      }
-      ```
-
-### 15. Mark Lesson as Completed and Enable Next Lesson
-
-- **URL**: `/user/courses/:courseId/lesson/:lessonId/complete`
-- **Method**: `POST`
-- **Description**: Marks a specific lesson as completed for the authenticated user and enables the next lesson in sequence, either within the same module or in the next module.
-- **Headers**:
-  - **`Authorization`**: Bearer token required to verify the user.
-- **URL Parameters**:
-  - **`courseId`** (required): The ID of the course containing the lesson.
-  - **`lessonId`** (required): The ID of the lesson to be marked as completed.
-- **Success Response**:
-  - **Code**: `200 OK`
-  - **Content**: JSON object with a success message.
-  - **Example**:
-    ```json
-    {
-      "message": "Lesson marked as completed and next lesson enabled"
-    }
-    ```
-- **Error Responses**:
-  - **Code**: `404 Not Found`
-    - **Content**:
-      ```json
-      {
-        "message": "User not found"
-      }
-      ```
-    - **Content**:
-      ```json
-      {
-        "message": "Course not found in user's courses"
-      }
-      ```
-    - **Content**:
-      ```json
-      {
-        "message": "Course not found"
-      }
-      ```
-    - **Content**:
-      ```json
-      {
-        "message": "Modules not found in course"
-      }
-      ```
-    - **Content**:
-      ```json
-      {
-        "message": "Lesson not found"
-      }
-      ```
-    - **Content**:
-      ```json
-      {
-        "message": "Lesson not found in user's course progress"
-      }
-      ```
-  - **Code**: `500 Internal Server Error`
-    - **Content**:
-      ```json
-      {
-        "message": "An error occurred while completing the lesson",
-        "error": "Error message here"
-      }
-      ```
+  - **Error Responses**:
+    - **Code**: `404 Not Found` – User not found.
+      - **Content**:
+        ```json
+        {
+          "message": "User not found"
+        }
+        ```
+    - **Code**: `404 Not Found` – Course not found in the user's paid courses.
+      - **Content**:
+        ```json
+        {
+          "message": "Course not found in user's paid course"
+        }
+        ```
+    - **Code**: `404 Not Found` – Course not found in the database.
+      - **Content**:
+        ```json
+        {
+          "message": "Course not found"
+        }
+        ```
+    - **Code**: `500 Internal Server Error` – Server error occurred while processing the request.
+      - **Content**:
+        ```json
+        {
+          "message": "An error occurred",
+          "error": "error_message_here"
+        }
+        ```
 
 ### Flow:
 
-1. The user's course progress is retrieved, and the lesson is marked as completed by setting `completed: true` and `progress: 100`.
-2. The next lesson in the same module or the first lesson in the next module is found and enabled by setting `isEnabled: true`.
-3. The user’s progress is saved.
-4. If the lesson or course is not found, appropriate error messages are returned.
+1. **User Verification**:
+
+   - The server checks if the user exists using the `userId` from the JWT token.
+   - If the user is not found, it returns a `404` error.
+
+2. **Course Validation**:
+
+   - The server checks if the specified `courseId` exists in the user's list of paid courses.
+   - If the course is not found in the user's list of courses, it returns a `404` error.
+
+3. **Course Details Fetch**:
+
+   - The server retrieves the course from the database, including the course modules and tests.
+   - If the course is not found in the database, it returns a `404` error.
+
+4. **Mapping User Progress**:
+
+   - The server creates two maps:
+     - `lessonProgressMap`: Maps the `lessonId` to the user’s progress (completed, progress, isOpened, etc.) for each lesson.
+     - `testProgressMap`: Maps the `testId` to the user’s progress (passed, score, isEnabled, etc.) for each test.
+
+5. **Creating the Response**:
+
+   - For each course module, the server checks whether the user has completed the lessons and tests and adjusts the lesson and test details accordingly:
+     - **Lessons**: For each lesson, the server includes the user's progress (completed, isOpened, progress, etc.).
+     - **Test**: For each test in the module, the server includes the user's test progress (isEnabled, passed, score, isOpened).
+
+6. **Response**:
+   - The server returns a response containing:
+     - The course details, including the lesson and test progress.
+     - Whether the user has completed the course.
+
+### Key Fields:
+
+- **`lessonProgressMap`**: A map that stores the user's progress for each lesson in the course.
+
+  - Key: `lessonId` (converted to string)
+  - Value: The lesson progress object containing fields like `completed`, `progress`, `isOpened`, etc.
+
+- **`testProgressMap`**: A map that stores the user's progress for each test in the course.
+
+  - Key: `testId` (converted to string)
+  - Value: The test progress object containing fields like `isEnabled`, `passed`, `score`, `isOpened`.
+
+- **`courseWithLessonProgress`**: The course object with detailed progress data added to each lesson and test in the course modules.
+
+  - **Modules**:
+    - Each module contains a `test` object and an array of `lessons`.
+    - Each `test` object includes the user's progress data, such as `isEnabled`, `passed`, `score`, and `isOpened`.
+    - Each `lesson` includes the user's progress data, such as `completed`, `progress`, `isOpened`, and `isEnabled`.
+
+- **`completed`**: Boolean indicating whether the user has completed the course.
+
+### Error Handling:
+
+The function includes comprehensive error handling:
+
+- If the user is not found, or if the course is not found in the user's paid courses or in the database, appropriate `404` error responses are returned.
+- If an unexpected error occurs while fetching the course or processing the request, a `500` internal server error is returned.
+
+This function ensures that the user’s course progress is retrieved efficiently, with detailed lesson and test data reflecting their current progress in the course.
+
+# Update Lesson Progress and Enable Next Lesson/Test
+
+## 15. Mark a Lesson as Completed and Enable the Next Lesson or Test
+
+- **URL**: `/user/courses/:courseId/lessons/:lessonId/progress`
+- **Method**: `PUT`
+- **Description**: Marks a lesson as completed for a user and enables the next lesson or test in the course module. If a test follows the lesson, it is enabled for the user. If there are no lessons left, the next module's lesson is unlocked.
+- **Request Headers**:
+  - **Authorization**: JWT token (required).
+- **Request Parameters**:
+  - **`courseId`** (required): The ID of the course containing the lesson.
+  - **`lessonId`** (required): The ID of the lesson to mark as completed.
+- **Response**:
+  - **Success Response**:
+    - **Code**: `200 OK`
+    - **Content**: JSON object with a message indicating the lesson has been marked as completed and the next lesson/test is enabled.
+    - **Example**:
+      ```json
+      {
+        "message": "Lesson marked as completed and next lesson enabled"
+      }
+      ```
+  - **Error Responses**:
+    - **Code**: `404 Not Found` – User not found.
+      - **Content**:
+        ```json
+        {
+          "message": "User not found"
+        }
+        ```
+    - **Code**: `404 Not Found` – Course not found in the user's courses.
+      - **Content**:
+        ```json
+        {
+          "message": "Course not found in user's courses"
+        }
+        ```
+    - **Code**: `404 Not Found` – Course not found in the database.
+      - **Content**:
+        ```json
+        {
+          "message": "Course not found"
+        }
+        ```
+    - **Code**: `404 Not Found` – No modules found in the course.
+      - **Content**:
+        ```json
+        {
+          "message": "Modules not found in course"
+        }
+        ```
+    - **Code**: `404 Not Found` – Lesson not found in the course.
+      - **Content**:
+        ```json
+        {
+          "message": "Lesson not found"
+        }
+        ```
+    - **Code**: `404 Not Found` – Lesson not found in the user's course progress.
+      - **Content**:
+        ```json
+        {
+          "message": "Lesson not found in user's course progress"
+        }
+        ```
+    - **Code**: `404 Not Found` – No next lesson found and no test to enable.
+      - **Content**:
+        ```json
+        {
+          "message": "No next lesson or test found"
+        }
+        ```
+    - **Code**: `500 Internal Server Error` – Server error occurred while processing the request.
+      - **Content**:
+        ```json
+        {
+          "message": "An error occurred while completing the lesson",
+          "error": "error_message_here"
+        }
+        ```
+
+### Flow:
+
+1. **User Verification**:
+
+   - The server verifies the user’s identity using the `userId` in the JWT token.
+   - If the user is not found, a `404` error response is returned.
+
+2. **Course Verification**:
+
+   - The server checks if the user is enrolled in the requested course (`courseId`).
+   - If the course is not found in the user’s courses, a `404` error response is returned.
+
+3. **Lesson Search**:
+
+   - The server searches for the lesson in the course modules.
+   - If the lesson is not found, a `404` error response is returned.
+   - If the lesson is found, it is marked as completed and its progress is set to `100%`.
+
+4. **Next Lesson Search**:
+
+   - The server checks if there is a next lesson in the course module based on the `lessonIndex`.
+   - If a next lesson is found, it is enabled for the user. If not, the server checks if a test follows the lesson.
+   - If a test follows the lesson and is found, it is enabled for the user.
+   - If neither a next lesson nor a test is found, the server attempts to find the next module and unlocks the first lesson of that module.
+
+5. **Test Handling**:
+
+   - If a test is found after the current lesson, the server marks the test as enabled for the user.
+
+6. **Response**:
+   - The server returns a message indicating the lesson has been completed, and either the next lesson or test has been enabled.
+
+### Key Fields:
+
+- **`userLesson`**:
+
+  - **`lessonId`**: The ID of the lesson being marked as completed.
+  - **`completed`**: Set to `true` when the lesson is completed.
+  - **`progress`**: Set to `100` to indicate full completion of the lesson.
+
+- **`nextLesson`**:
+
+  - The next lesson in the module that is unlocked for the user.
+  - The `isEnabled` property is set to `true` for the unlocked lesson.
+
+- **`nextTest`**:
+  - The test that follows the current lesson in the module, which is enabled for the user.
+
+This flow ensures that when a user completes a lesson, the next available lesson or test is unlocked for them, allowing continuous progression through the course.
 
 # Password Reset Functionality
 

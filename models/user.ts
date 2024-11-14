@@ -14,6 +14,7 @@ interface LessonProgress {
 interface Test {
   testId: mongoose.Schema.Types.ObjectId;
   passed: boolean;
+  score: string;
   isEnabled: boolean;
   isOpened: boolean;
 }
@@ -76,7 +77,8 @@ const userSchema = new mongoose.Schema<User>({
           testId: { type: mongoose.Schema.Types.ObjectId },
           passed: { type: Boolean, default: false },
           isEnabled: { type: Boolean, default: false },
-          isOpened: {type: Boolean, default: false}
+          isOpened: {type: Boolean, default: false},
+          score: {type: String, default: "0"}
         },
       ],
       lessons: [

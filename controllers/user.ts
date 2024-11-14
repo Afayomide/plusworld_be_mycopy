@@ -1,6 +1,6 @@
 // routes/products.js
 const mongoose = require("mongoose");
-require("../models/test")
+require("../models/test");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const path = require("path");
 const { v4: uuidv4 } = require("uuid");
@@ -356,9 +356,9 @@ export const getLesson = async (req: any, res: Response) => {
 
     await user.save();
     const plainCurrentLesson = JSON.parse(JSON.stringify(currentLesson));
-    const plainUserLesson = JSON.parse(JSON.stringify(userLesson))
+    const plainUserLesson = JSON.parse(JSON.stringify(userLesson));
 
-    return res.json({ ...plainUserLesson, ...plainCurrentLesson  });
+    return res.json({ ...plainUserLesson, ...plainCurrentLesson });
   } catch (error: any) {
     console.error(error);
     return res.status(500).json({
@@ -367,7 +367,6 @@ export const getLesson = async (req: any, res: Response) => {
     });
   }
 };
-
 
 export const getTest = async (req: any, res: Response) => {
   const userId = req.user.userId;
@@ -388,7 +387,7 @@ export const getTest = async (req: any, res: Response) => {
         .json({ message: "Course not found in user's courses" });
     }
 
-    const course = await Course.findById(courseId)
+    const course = await Course.findById(courseId);
     if (!course) {
       return res.status(404).json({ message: "Course not found" });
     }
@@ -398,40 +397,36 @@ export const getTest = async (req: any, res: Response) => {
 
     const test = course.courseModules.flatMap((module) => module.test);
     console.log(test);
-    const currentTest = test.find(
-      (test) => test.toString() === testId
-    );
+    const currentTest = test.find((test) => test.toString() === testId);
 
-    if (!currentTest) {     
-       return res.json({message: "test not found"});
-
-    } 
-    const populatedTest = await mongoose.model('Test').findById(currentTest).populate();
+    if (!currentTest) {
+      return res.json({ message: "test not found" });
+    }
+    const populatedTest = await mongoose
+      .model("Test")
+      .findById(currentTest)
+      .populate();
 
     let userTest;
-    userTest = userCourse?.tests.find(
-      (t) => t.testId.toString() === testId
-    )
+    userTest = userCourse?.tests.find((t) => t.testId.toString() === testId);
     if (!userTest) {
       userTest = {
         testId: testId,
         isEnabled: false,
         passed: false,
+        score: "0",
         isOpened: true,
       };
       userCourse?.tests.push(userTest);
-    }
-     else {
+    } else {
       userTest.isOpened = true;
     }
 
-    await user.save()
+    await user.save();
 
     const plainPopulatedTest = populatedTest.toObject();
     const plainUserTest = JSON.parse(JSON.stringify(userTest));
-    return res.json({ ...plainUserTest, ...plainPopulatedTest  });
-
-    
+    return res.json({ ...plainUserTest, ...plainPopulatedTest });
   } catch (error: any) {
     console.error(error);
     return res.status(500).json({
@@ -441,9 +436,9 @@ export const getTest = async (req: any, res: Response) => {
   }
 };
 
-
 export const updateProgress = async (req: Request, res: Response) => {
   const userId = req.user.userId;
+  var lessonOrTest
   const { courseId, lessonId } = req.params;
 
   try {
@@ -503,12 +498,24 @@ export const updateProgress = async (req: Request, res: Response) => {
     );
 
     if (!nextLesson) {
-      const currentModuleIndex = currentModule.moduleIndex;
-      const nextModule = course.courseModules.find(
-        (module) => module.moduleIndex === currentModuleIndex + 1
+      let nextTest = currentModule.test;
+      let nextUserTest = userCourse.tests.find(
+        (t) => t.testId.toString() === nextTest.toString()
       );
-      if (nextModule) {
-        nextLesson = nextModule.lessons[0];
+      if (!nextUserTest) {
+        res.status(404).json({ message: "test not found" });
+        const currentModuleIndex = currentModule.moduleIndex;
+        const nextModule = course.courseModules.find(
+          (module) => module.moduleIndex === currentModuleIndex + 1
+        );
+        if (nextModule) {
+          nextLesson = nextModule.lessons[0];
+        }
+      } else {
+        console.log("changing to true")
+        nextUserTest.isEnabled = true;        
+        lessonOrTest = "Test"
+
       }
     }
 
@@ -527,12 +534,13 @@ export const updateProgress = async (req: Request, res: Response) => {
         });
       } else {
         nextUserLesson.isEnabled = true;
+        lessonOrTest = "next lesson"
       }
     }
 
     await user.save();
     return res.json({
-      message: "Lesson marked as completed and next lesson enabled",
+      message: `Lesson marked as completed and ${lessonOrTest} enabled`,
     });
   } catch (error: any) {
     console.error(error);
@@ -610,16 +618,30 @@ export const getPaidCourse = async (req: Request, res: Response) => {
     const lessonProgressMap = new Map(
       userCourse.lessons.map((lesson) => [lesson.lessonId.toString(), lesson])
     );
-    console.log(lessonProgressMap);
+    const testProgressMap = new Map(
+      userCourse.tests.map((test) => [test.testId.toString(), test])
+    ) 
+    console.log("this is test", testProgressMap);
 
     const courseWithLessonProgress = {
       ...course.toObject(),
       courseModules: course.courseModules?.map((module) => ({
         moduleName: module.moduleName,
         moduleIndex: module.moduleIndex,
-        test: module.test,
+        test: (() => {
+          const test = module.test
+          const plainTest = JSON.parse(JSON.stringify(test));
+
+          const userTestProgress = testProgressMap.get(plainTest._id.toString());
+          return {
+            ...plainTest,
+            isEnabled: userTestProgress ? userTestProgress.isEnabled : false,
+            passed: userTestProgress ? userTestProgress.passed : false,
+            score: userTestProgress ? userTestProgress.score : "0",
+            isOpened: userTestProgress ? userTestProgress.isOpened : false,
+          };
+        })(),
         lessons: module.lessons.map((lesson) => {
-          console.log(lesson);
           const userLessonProgress = lessonProgressMap.get(
             lesson._id.toString()
           );
