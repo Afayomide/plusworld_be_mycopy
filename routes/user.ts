@@ -18,6 +18,7 @@ import {
   updateProgress,
   uploadUser,
   getTest,
+  markTest,
 } from "../controllers/user";
 
 const storage = multer.memoryStorage();
@@ -63,5 +64,5 @@ router
 router.route("/paidcourses").get(getPaidCourses);
 
 router.route("/paidcourse/:courseId").get(getPaidCourse);
-
+router.route("/courses/:courseId/test/:testId/mark").put(markTest);
 module.exports = router;

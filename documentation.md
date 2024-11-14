@@ -987,7 +987,7 @@ This function ensures that the user’s course progress is retrieved efficiently
 
 ## 15. Mark a Lesson as Completed and Enable the Next Lesson or Test
 
-- **URL**: `/user/courses/:courseId/lessons/:lessonId/progress`
+- **URL**: `/user/courses/:courseId/lesson/:lessonId/complete`
 - **Method**: `PUT`
 - **Description**: Marks a lesson as completed for a user and enables the next lesson or test in the course module. If a test follows the lesson, it is enabled for the user. If there are no lessons left, the next module's lesson is unlocked.
 - **Request Headers**:
@@ -1481,3 +1481,137 @@ This flow ensures that when a user completes a lesson, the next available lesson
 - The object contains detailed information about the test, such as its title, questions, duration, passing score, etc.
 
 This flow ensures that the user can always see the current status of their tests, while also receiving any new or updated details about the test itself.
+
+
+# Mark Test Result and Update Course Progress
+
+## 22. Mark a Test as Completed and Update User Progress
+
+- **URL**: `/courses/:courseId/tests/:testId/mark`
+- **Method**: `POST`
+- **Description**: Marks a user's test as completed, updates the score, and determines if the user passed. If the user passes the test (score ≥ 80), the next module's first lesson is enabled for the user.
+- **Request Headers**:
+  - **Authorization**: JWT token (required).
+- **Request Parameters**:
+  - **`courseId`** (required): The ID of the course to which the test belongs.
+  - **`testId`** (required): The ID of the test being marked.
+- **Request Body**:
+  - **`score`** (required): The score the user received on the test (should be a numeric value in string format).
+- **Response**:
+  - **Success Response**:
+    - **Code**: `200 OK`
+    - **Content**: JSON object containing the updated test result.
+    - **Example**:
+      ```json
+      {
+        "message": "Test marked successfully",
+        "testResult": {
+          "testId": "testId",
+          "score": "85",
+          "passed": true
+        }
+      }
+      ```
+  - **Error Responses**:
+    - **Code**: `404 Not Found` – User not found.
+      - **Content**:
+        ```json
+        {
+          "message": "User not found"
+        }
+        ```
+    - **Code**: `404 Not Found` – Course not found in the user's courses.
+      - **Content**:
+        ```json
+        {
+          "message": "Course not found in user's courses"
+        }
+        ```
+    - **Code**: `404 Not Found` – Course not found in the database.
+      - **Content**:
+        ```json
+        {
+          "message": "Course not found"
+        }
+        ```
+    - **Code**: `404 Not Found` – Modules not found in the course.
+      - **Content**:
+        ```json
+        {
+          "message": "Modules not found in course"
+        }
+        ```
+    - **Code**: `404 Not Found` – Test not found in the user's course progress.
+      - **Content**:
+        ```json
+        {
+          "message": "Test not found in user's course progress"
+        }
+        ```
+    - **Code**: `404 Not Found` – Module not found by the test ID.
+      - **Content**:
+        ```json
+        {
+          "message": "Module not found"
+        }
+        ```
+    - **Code**: `500 Internal Server Error` – Server error occurred while processing the request.
+      - **Content**:
+        ```json
+        {
+          "message": "An error occurred while marking the test",
+          "error": "error_message_here"
+        }
+        ```
+
+### Flow:
+
+1. **User Validation**:
+   - The server checks if the user exists using the `userId` from the JWT token.
+   - If the user is not found, it returns a `404` error.
+
+2. **Course Validation**:
+   - The server checks if the specified `courseId` exists in the user's courses.
+   - If the course is not found, it returns a `404` error.
+
+3. **Course and Modules Validation**:
+   - The server retrieves the course from the database.
+   - If the course does not contain any modules, it returns a `404` error.
+
+4. **Test Validation**:
+   - The server checks if the test exists in the user's course progress.
+   - If the test is not found, it returns a `404` error.
+
+5. **Marking the Test**:
+   - The server updates the `score` of the user's test.
+   - If the score is greater than or equal to 80, the test is marked as "passed".
+   - The server then checks if the test is part of a module and identifies the next module.
+   - If the next module contains lessons, the first lesson in that module is enabled for the user.
+
+6. **Saving the Changes**:
+   - The server saves the updated user progress and returns a success message.
+
+7. **Response**:
+   - The server returns a response containing:
+     - A success message indicating the test was marked successfully.
+     - The updated test result, including the score and passed status.
+
+### Key Fields:
+
+- **`score`**: The score the user received on the test (must be provided in the request body).
+- **`passed`**: A boolean indicating if the user passed the test (set to `true` if the score is ≥ 80).
+- **`testResult`**: The updated test progress object that includes:
+  - `testId`: The ID of the test.
+  - `score`: The score received on the test.
+  - `passed`: Whether the user passed the test.
+
+- **`isEnabled`**: A flag to indicate whether the next module's first lesson is unlocked for the user. It is set to `true` when the user passes the test for the module.
+
+### Error Handling:
+
+The function includes comprehensive error handling:
+- If the user, course, or test is not found, the server responds with a `404` error and an appropriate message.
+- If there is a server-side error while processing the request, a `500` internal server error is returned.
+
+This function ensures that the user's test progress is properly recorded, and subsequent course modules are unlocked based on the user's performance on the tests.
+

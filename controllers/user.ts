@@ -438,7 +438,7 @@ export const getTest = async (req: any, res: Response) => {
 
 export const updateProgress = async (req: Request, res: Response) => {
   const userId = req.user.userId;
-  var lessonOrTest
+  var lessonOrTest;
   const { courseId, lessonId } = req.params;
 
   try {
@@ -512,10 +512,9 @@ export const updateProgress = async (req: Request, res: Response) => {
           nextLesson = nextModule.lessons[0];
         }
       } else {
-        console.log("changing to true")
-        nextUserTest.isEnabled = true;        
-        lessonOrTest = "Test"
-
+        console.log("changing to true");
+        nextUserTest.isEnabled = true;
+        lessonOrTest = "Test";
       }
     }
 
@@ -534,7 +533,7 @@ export const updateProgress = async (req: Request, res: Response) => {
         });
       } else {
         nextUserLesson.isEnabled = true;
-        lessonOrTest = "next lesson"
+        lessonOrTest = "next lesson";
       }
     }
 
@@ -620,8 +619,7 @@ export const getPaidCourse = async (req: Request, res: Response) => {
     );
     const testProgressMap = new Map(
       userCourse.tests.map((test) => [test.testId.toString(), test])
-    ) 
-    console.log("this is test", testProgressMap);
+    );
 
     const courseWithLessonProgress = {
       ...course.toObject(),
@@ -629,10 +627,12 @@ export const getPaidCourse = async (req: Request, res: Response) => {
         moduleName: module.moduleName,
         moduleIndex: module.moduleIndex,
         test: (() => {
-          const test = module.test
+          const test = module.test;
           const plainTest = JSON.parse(JSON.stringify(test));
 
-          const userTestProgress = testProgressMap.get(plainTest._id.toString());
+          const userTestProgress = testProgressMap.get(
+            plainTest._id.toString()
+          );
           return {
             ...plainTest,
             isEnabled: userTestProgress ? userTestProgress.isEnabled : false,
@@ -676,5 +676,85 @@ export const getPaidCourse = async (req: Request, res: Response) => {
     res
       .status(500)
       .json({ message: "An error occurred", error: error.message });
+  }
+};
+
+export const markTest = async (req: Request, res: Response) => {
+  const userId = req.user.userId;
+  const { courseId, testId } = req.params;
+  const { score } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const userCourse = user.courses.find(
+      (c) => c.courseId.toString() === courseId
+    );
+    if (!userCourse) {
+      return res
+        .status(404)
+        .json({ message: "Course not found in user's courses" });
+    }
+
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+    if (!course.courseModules) {
+      return res.status(404).json({ message: "Modules not found in course" });
+    }
+
+    let userTest = userCourse.tests.find((t) => t.testId.toString() === testId);
+    if (!userTest) {
+      return res
+        .status(404)
+        .json({ message: "Test not found in user's course progress" });
+    }
+
+    userTest.score = score.toString();
+    if (parseInt(score) >= 80) {
+      userTest.passed = true;
+
+      const currentModule = course.courseModules.find(
+        (module) => module.test.toString() === testId // Find module by test ID
+      );
+      if (!currentModule) {
+        return res.status(404).json("module not found");
+      }
+      const currentModuleIndex = currentModule.moduleIndex;
+      console.log(currentModuleIndex);
+
+      if (currentModuleIndex !== -1) {
+        const nextModule = course.courseModules.find(
+          (module) => module.moduleIndex === currentModuleIndex + 1
+        );
+        if (nextModule && nextModule.lessons.length > 0) {
+          const firstLessonId = nextModule.lessons[0]._id;
+          const userLesson = userCourse.lessons.find(
+            (lesson) => lesson.lessonId.toString() === firstLessonId.toString()
+          );
+
+          if (userLesson) {
+            userLesson.isEnabled = true;
+          }
+        }
+      }
+    }
+
+    await user.save();
+
+    return res.json({
+      message: "Test marked successfully",
+      testResult: userTest,
+    });
+  } catch (error: any) {
+    console.error(error);
+    return res.status(500).json({
+      message: "An error occurred while marking the test",
+      error: error.message,
+    });
   }
 };
