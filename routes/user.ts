@@ -55,7 +55,7 @@ router.route("/courseprogress/:courseId").get(courseProgress);
 
 router.route("/courses/:courseId/lesson/:lessonId").get(getLesson);
 
-router.route("/courses/:courseId/test/:testId").get(getTest);
+router.route("/courses/:courseId/tests/:testId").get(getTest);
 
 router
   .route("/courses/:courseId/lesson/:lessonId/complete")
@@ -64,5 +64,5 @@ router
 router.route("/paidcourses").get(getPaidCourses);
 
 router.route("/paidcourse/:courseId").get(getPaidCourse);
-router.route("/courses/:courseId/test/:testId/mark").put(markTest);
+router.route("/courses/:courseId/tests/:testId/mark").put(markTest);
 module.exports = router;
