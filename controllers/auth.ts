@@ -7,7 +7,9 @@ import crypto from "crypto";
 import { Request, Response } from "express";
 
 const transporter = nodemailer.createTransport({
-  service: "Gmail",
+  host: "smtp.zoho.com",
+  secure: true,
+  port: 465,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
@@ -198,13 +200,13 @@ export const forgotPassword = async (req: Request, res: Response) => {
           <img src="cid:logoImage" alt="Company Logo" width="100" height:auto;>
         </div>
       `,
-      attachments: [
-        {
-          filename: "logo.png",
-          path: "../assets/logo.png",
-          cid: "logoImage",
-        },
-      ],
+      // attachments: [
+      //   {
+      //     filename: "logo.png",
+      //     path: "../assets/logo.png",
+      //     cid: "logoImage",
+      //   },
+      // ],
     };
 
     await transporter.sendMail(mailOptions);

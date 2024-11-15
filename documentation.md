@@ -1488,7 +1488,7 @@ This flow ensures that the user can always see the current status of their tests
 ## 22. Mark a Test as Completed and Update User Progress
 
 - **URL**: `user/courses/:courseId/tests/:testId/mark`
-- **Method**: `POST`
+- **Method**: `put`
 - **Description**: Marks a user's test as completed, updates the score, and determines if the user passed. If the user passes the test (score ≥ 80), the next module's first lesson is enabled for the user.
 - **Request Headers**:
   - **Authorization**: JWT token (required).
