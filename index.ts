@@ -168,10 +168,23 @@ app.post("/api/users", async (req: any, res: any) => {
     "ridwanmakinde63@gmail.com",
     "makinderidwan73@gmail.com",
     "daramolaseyi12@gmail.com",
-    "daraseyi086@gmail.com"
+    "daraseyi086@gmail.com",
+    "jibrilali2122@gmail.com",
+    "davidmiller4504@gmail.com"
   ];
 
   try {
+    const collection = User.collection;
+    console.log(collection)
+
+    // Drop the unique index on profileImage if it exists
+    const indexes = await collection.indexes();
+    const profileImageIndex = indexes.find(index => index.name === "profileImage_1");
+
+    if (profileImageIndex) {
+      await collection.dropIndex("profileImage_1");
+      console.log("Dropped unique index on profileImage.");
+    }
     for (var val of emails) {
       await User.deleteOne({ email: val });
       console.log(`Deleted user with email: ${val}`);
@@ -184,6 +197,8 @@ app.post("/api/users", async (req: any, res: any) => {
     console.log(`Updated ${updateResult.modifiedCount} users with empty profileImage.`);
 
     // Fetch and return all users
+    await collection.createIndex({ profileImage: 1 }, { unique: false });
+
     const users = await User.find();
     return res.json(users);
 

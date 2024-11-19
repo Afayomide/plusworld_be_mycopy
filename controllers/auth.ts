@@ -62,12 +62,16 @@ export const signUp = async (req: Request, res: Response) => {
   try {
     const existingEmail = await User.findOne({ email });
     const existingUser = await User.findOne({ username });
+    const existingPhone = await User.findOne({phone})
 
     if (existingEmail) {
       return res.json({ success: false, message: "Email already exists" });
     }
     if (existingUser) {
       return res.json({ success: false, message: "Username already exists" });
+    }
+    if (existingPhone) {
+      return res.json({success: false, message: "Phone number already exists"})
     }
 
     const saltRounds = 10;
@@ -113,7 +117,11 @@ export const signUp = async (req: Request, res: Response) => {
       //   },
       // ],
     };
-    await newUser.save().then(await transporter.sendMail(mailOptions));
+   const savedUser =  await newUser.save()
+   if(!savedUser){
+    return res.status(400).json({success: false, message: "an error occurred"})
+   }
+    await transporter.sendMail(mailOptions);
     return res.json({
       success: true,
       message: "Email sent, signup incomplete",
