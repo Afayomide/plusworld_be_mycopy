@@ -61,7 +61,7 @@ export const signUp = async (req: Request, res: Response) => {
 
   try {
     const existingEmail = await User.findOne({ email });
-    const existingUser = await User.findOne({username});
+    const existingUser = await User.findOne({ username });
 
     if (existingEmail) {
       return res.json({ success: false, message: "Email already exists" });
@@ -76,7 +76,7 @@ export const signUp = async (req: Request, res: Response) => {
     const newUser = new User({
       fullname,
       username,
-      email,
+      email : email.toLowerCase(),
       phone,
       password: hashedPassword,
       token: signupToken,
@@ -113,9 +113,7 @@ export const signUp = async (req: Request, res: Response) => {
       //   },
       // ],
     };
-
-    await transporter.sendMail(mailOptions);
-    await newUser.save();
+    await newUser.save().then(await transporter.sendMail(mailOptions));
     return res.json({
       success: true,
       message: "Email sent, signup incomplete",

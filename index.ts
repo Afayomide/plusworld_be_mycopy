@@ -168,38 +168,31 @@ app.post("/api/users", async (req: any, res: any) => {
     "ridwanmakinde63@gmail.com",
     "makinderidwan73@gmail.com",
     "daramolaseyi12@gmail.com",
+    "daraseyi086@gmail.com"
   ];
-  for (var val of emails) {
-    await User.deleteOne({ email: val });
-    console.log("deleted");
+
+  try {
+    for (var val of emails) {
+      await User.deleteOne({ email: val });
+      console.log(`Deleted user with email: ${val}`);
+    }
+
+    const updateResult = await User.updateMany(
+      { profileImage: null },
+      { $set: { profileImage: '' } }
+    );
+    console.log(`Updated ${updateResult.modifiedCount} users with empty profileImage.`);
+
+    // Fetch and return all users
+    const users = await User.find();
+    return res.json(users);
+
+  } catch (error) {
+    console.error("Error during database operations:", error);
+    return res.status(500).json({ message: "An error occurred", error });
   }
-  User.updateMany(
-    { profileImage: null },
-    { $set: { profileImage: '' } }
-);
-  // const allUsers = await User.find();
-
-  // for (const user of allUsers) {
-  //   let modified = false;
-
-  //   // Iterate over each course and its tests
-  //   for (const course of user.courses) {
-  //     for (const test of course.tests) {
-  //       if (test.isEnabled) {
-  //         test.isEnabled = false; // Update isEnabled to true if it's false
-  //         modified = true;
-  //       }
-  //     }
-  //   }
-
-  //   // Save user only if any test was modified
-  //   if (modified) {
-  //     await user.save();
-  //     console.log("changed to false")
-  //   }
-  // }
-  return res.json(await User.find());
 });
+
 // function monitorMemory() {
 //   const memoryUsage = process.memoryUsage();
 //   console.log(`Memory Usage: ${memoryUsage.heapUsed / 1024 / 1024} MB`);
