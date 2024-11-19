@@ -50,7 +50,7 @@ export interface User {
 const userSchema = new mongoose.Schema<User>({
   fullname: { type: String, required: true },
   username: { type: String, required: true, unique: true },
-  profileImage: { type: String, required: false, unique: false },
+  profileImage: { type: String},
   email: { type: String, required: true, unique: true },
   phone: { type: String, required: false, unique: true },
   hobbies: { type: String, required: false },
