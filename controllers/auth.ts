@@ -60,8 +60,12 @@ export const signUp = async (req: Request, res: Response) => {
   }
 
   try {
-    const existingUser = await User.findOne({ username });
+    const existingEmail = await User.findOne({ email });
+    const existingUser = await User.findOne({username});
 
+    if (existingEmail) {
+      return res.json({ success: false, message: "Email already exists" });
+    }
     if (existingUser) {
       return res.json({ success: false, message: "Username already exists" });
     }

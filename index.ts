@@ -14,7 +14,7 @@ const userRouter = require("./routes/user");
 const courseRouter = require("./routes/course");
 const paymentRouter = require("./routes/payments");
 const authRouter = require("./routes/auth");
-const testRouter = require("./routes/test")
+const testRouter = require("./routes/test");
 
 const port = 4000;
 const dburl: string = process.env.dburl || "";
@@ -39,7 +39,7 @@ app.use(bodyParser.text());
 app.use("/api/user", verifyToken, userRouter);
 app.use("/api/courses", courseRouter);
 app.use("/api/auth", authRouter);
-app.use("/api/test", testRouter)
+app.use("/api/test", testRouter);
 
 app.use("/api", paymentRouter);
 
@@ -51,8 +51,6 @@ declare global {
     }
   }
 }
-
-
 
 connectToMongo(dburl)
   .then(() => {
@@ -164,36 +162,44 @@ app.post("/api/complete-course", async (req: any, res: any) => {
   }
 });
 
-app.post("/api/users", async(req:any, res:any) =>{
-  const emails =["nayzu.nayzu@gmail.com"]
-  for (var val of emails){
-      var users = await User.deleteOne({email : val});
-      console.log("deleted")
+app.post("/api/users", async (req: any, res: any) => {
+  const emails = [
+    "roycode73@gmail.com",
+    "ridwanmakinde63@gmail.com",
+    "makinderidwan73@gmail.com",
+    "daramolaseyi12@gmail.com",
+  ];
+  for (var val of emails) {
+    await User.deleteOne({ email: val });
+    console.log("deleted");
   }
+  User.updateMany(
+    { profileImage: null },
+    { $set: { profileImage: '' } }
+);
+  // const allUsers = await User.find();
 
-  const allUsers = await User.find();
+  // for (const user of allUsers) {
+  //   let modified = false;
 
-  for (const user of allUsers) {
-    let modified = false;
+  //   // Iterate over each course and its tests
+  //   for (const course of user.courses) {
+  //     for (const test of course.tests) {
+  //       if (test.isEnabled) {
+  //         test.isEnabled = false; // Update isEnabled to true if it's false
+  //         modified = true;
+  //       }
+  //     }
+  //   }
 
-    // Iterate over each course and its tests
-    for (const course of user.courses) {
-      for (const test of course.tests) {
-        if (test.isEnabled) {
-          test.isEnabled = false; // Update isEnabled to true if it's false
-          modified = true;
-        }
-      }
-    }
-
-    // Save user only if any test was modified
-    if (modified) {
-      await user.save();
-      console.log("changed to false")
-    }
-  }
-  return res.json(await User.find())
-})
+  //   // Save user only if any test was modified
+  //   if (modified) {
+  //     await user.save();
+  //     console.log("changed to false")
+  //   }
+  // }
+  return res.json(await User.find());
+});
 // function monitorMemory() {
 //   const memoryUsage = process.memoryUsage();
 //   console.log(`Memory Usage: ${memoryUsage.heapUsed / 1024 / 1024} MB`);
