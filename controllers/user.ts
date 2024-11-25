@@ -4,7 +4,7 @@ require("../models/test");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const path = require("path");
 const { v4: uuidv4 } = require("uuid");
-
+import zlib from 'zlib';
 require("dotenv").config();
 import User from "../models/user";
 import Course from "../models/courses";
@@ -358,8 +358,22 @@ export const getLesson = async (req: any, res: Response) => {
     const plainCurrentLesson = JSON.parse(JSON.stringify(currentLesson));
     const plainUserLesson = JSON.parse(JSON.stringify(userLesson));
 
-    return res.json({ ...plainUserLesson, ...plainCurrentLesson });
-  } catch (error: any) {
+    const responseData = { ...plainUserLesson, ...plainCurrentLesson };
+
+    // Compress the response data with GZIP
+    zlib.gzip(JSON.stringify(responseData), (err:any, compressedData:any) => {
+      if (err) {
+        console.error("Error compressing data:", err);
+        return res
+          .status(500)
+          .json({ message: "An error occurred while compressing the data" });
+      }
+
+      res.setHeader('Content-Encoding', 'gzip');
+      res.setHeader('Content-Type', 'application/json');
+      res.send(compressedData);
+    });
+    } catch (error: any) {
     console.error(error);
     return res.status(500).json({
       message: "An error occurred while retrieving the lesson",

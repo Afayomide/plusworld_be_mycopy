@@ -174,33 +174,69 @@ app.post("/api/users", async (req: any, res: any) => {
   ];
 
   try {
-    const collection = User.collection;
-    console.log(collection)
+    // const collection = User.collection;
+    // console.log(collection)
 
-    // Drop the unique index on profileImage if it exists
-    const indexes = await collection.indexes();
-    const profileImageIndex = indexes.find(index => index.name === "profileImage_1");
+    // // Drop the unique index on profileImage if it exists
+    // const indexes = await collection.indexes();
+    // const profileImageIndex = indexes.find(index => index.name === "profileImage_1");
 
-    if (profileImageIndex) {
-      await collection.dropIndex("profileImage_1");
-      console.log("Dropped unique index on profileImage.");
+    // if (profileImageIndex) {
+    //   await collection.dropIndex("profileImage_1");
+    //   console.log("Dropped unique index on profileImage.");
+    // }
+    // for (var val of emails) {
+    //   await User.deleteOne({ email: val });
+    //   console.log(`Deleted user with email: ${val}`);
+    // }
+
+    // const updateResult = await User.updateMany(
+    //   { profileImage: null },
+    //   { $set: { profileImage: '' } }
+    // );
+    // console.log(`Updated ${updateResult.modifiedCount} users with empty profileImage.`);
+
+    // // Fetch and return all users
+    // await collection.createIndex({ profileImage: 1 }, { unique: false });
+
+    // var tests = await Test.find({});
+
+    // // Update each test
+    // for (var test of tests) {
+    //     test.questions = test.questions.map((question, index) => {
+    //         return {
+    //             ...question,
+    //             questionText: `Mock question ${index + 1} for test: ${test.testName}`,
+    //             options: ["option1", "option2", "option3", "option4"],
+    //             correctAnswer: "option1", // Set the new correct answer
+    //         };
+    //     });
+
+    //     // Save the updated test back to the database
+    //     await test.save();
+    //   }
+
+    var courses = await Courses.find();
+
+    // Iterate through each course
+    for (var course of courses) {
+      if(course.courseModules){
+        console.log("coursemodule found")
+         for (var module of course.courseModules) {
+            for (var lesson of module.lessons) {
+                // Check lessonIndex and update mediaUrl
+                if (lesson.lessonIndex === 2 || lesson.lessonIndex === 1) {
+                    lesson.mediaUrl = "https://plusworldacademy.s3.af-south-1.amazonaws.com/Lesson+1.pptx";
+                }
+            }
+        }
+      }
+        // Save the updated course back to the database
+        await course.save();
     }
-    for (var val of emails) {
-      await User.deleteOne({ email: val });
-      console.log(`Deleted user with email: ${val}`);
-    }
 
-    const updateResult = await User.updateMany(
-      { profileImage: null },
-      { $set: { profileImage: '' } }
-    );
-    console.log(`Updated ${updateResult.modifiedCount} users with empty profileImage.`);
-
-    // Fetch and return all users
-    await collection.createIndex({ profileImage: 1 }, { unique: false });
-
-    const users = await User.find();
-    return res.json(users);
+    console.log("Media URLs updated successfully!");
+    return res.json(courses);
 
   } catch (error) {
     console.error("Error during database operations:", error);
