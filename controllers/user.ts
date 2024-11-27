@@ -368,9 +368,6 @@ export const getLesson = async (req: any, res: Response) => {
           .status(500)
           .json({ message: "An error occurred while compressing the data" });
       }
-
-      res.setHeader('Content-Encoding', 'gzip');
-      res.setHeader('Content-Type', 'application/json');
       res.send(compressedData);
     });
     } catch (error: any) {
