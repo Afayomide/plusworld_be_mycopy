@@ -359,17 +359,18 @@ export const getLesson = async (req: any, res: Response) => {
     const plainUserLesson = JSON.parse(JSON.stringify(userLesson));
 
     const responseData = { ...plainUserLesson, ...plainCurrentLesson };
+    return res.json({...plainUserLesson, ...plainCurrentLesson })
 
     // Compress the response data with GZIP
-    zlib.gzip(JSON.stringify(responseData), (err:any, compressedData:any) => {
-      if (err) {
-        console.error("Error compressing data:", err);
-        return res
-          .status(500)
-          .json({ message: "An error occurred while compressing the data" });
-      }
-      res.send(compressedData);
-    });
+    // zlib.gzip(JSON.stringify(responseData), (err:any, compressedData:any) => {
+    //   if (err) {
+    //     console.error("Error compressing data:", err);
+    //     return res
+    //       .status(500)
+    //       .json({ message: "An error occurred while compressing the data" });
+    //   }
+    //   res.send(compressedData);
+    // });
     } catch (error: any) {
     console.error(error);
     return res.status(500).json({
